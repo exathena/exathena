@@ -14,7 +14,9 @@ defmodule ExAthenaApp.MixProject do
         "coveralls.html": :test
       ],
       deps: deps(),
-      dialyzer: dialyzer()
+      aliases: aliases(),
+      dialyzer: dialyzer(),
+      gettext: gettext()
     ] ++ hex()
   end
 
@@ -24,6 +26,13 @@ defmodule ExAthenaApp.MixProject do
       plt_file: {:no_warn, "tmp/dialyzer.plt"},
       plt_add_apps: [:ecto, :phoenix, :mix],
       ignore_warnings: ".dialyzerignore"
+    ]
+  end
+
+  defp gettext do
+    [
+      write_reference_comments: false,
+      compiler_po_wildcard: "*/LC_MESSAGES/*.po"
     ]
   end
 
@@ -46,6 +55,20 @@ defmodule ExAthenaApp.MixProject do
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:excoveralls, "~> 0.14", only: :test, runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      setup: ["deps.get", "ecto.setup"],
+      "ecto.setup": ["ecto.create", "ecto.load", "run sql-files/seeds.exs"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "ecto.load": ["ecto.load -d sql-files/main.sql --skip-if-loaded"],
+      "ecto.dump": ["ecto.dump -d sql-files/main.sql"],
+      "ecto.migrate": ["ecto.migrate", "ecto.dump"],
+      "ecto.rollback": ["ecto.rollback", "ecto.dump"],
+      sobelow: ["sobelow -r src/exathena"],
+      test: ["ecto.drop --quiet", "ecto.create --quiet", "ecto.load --quiet", "test"]
     ]
   end
 end

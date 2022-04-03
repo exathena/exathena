@@ -1,0 +1,3 @@
+{
+  "skip_files": ["lib/exathena/application.ex", "lib/exathena_web/*", "test/*"]
+}
