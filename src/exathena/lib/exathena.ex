@@ -32,7 +32,9 @@ defmodule ExAthena do
       use Ecto.Schema
       import Ecto.Changeset
 
+      alias Cloak.Ecto.SHA256
       alias Ecto.Changeset
+      alias ExAthena.Encrypted.Binary
     end
   end
 
