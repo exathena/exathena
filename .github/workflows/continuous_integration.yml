@@ -1,0 +1,82 @@
+name: continuous integration
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/exathena_test
+
+    name: test
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        elixir: [1.12.3]
+        otp: [24.0.6]
+
+    services:
+      db:
+        image: postgres:13.1
+        ports: ['5432:5432']
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Elixir
+      uses: erlef/setup-elixir@v1
+      with:
+        elixir-version: ${{ matrix.elixir }}
+        otp-version: ${{ matrix.otp }}
+
+    - name: Restore dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          deps
+          _build
+          tmp
+          tmp/plts
+        key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
+
+    - name: Install dependencies
+      if: steps.mix-cache.outputs.cache-hit != 'true'
+      run: |
+        mix deps.get
+        mix deps.compile
+
+    - name: Create dialyzer plt file
+      if: steps.mix-cache.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p tmp/plts
+        mix dialyzer --plt
+
+    - name: Check compilation
+      run: mix compile --warning-as-errors
+
+    - name: Check format
+      run: mix format --check-formatted
+
+    - name: Run type check
+      run: mix dialyzer
+
+    - name: Analyze code
+      run: mix credo -a
+
+    - name: Analyse security
+      run: mix sobelow
+
+    - name: Run tests & code coverage
+      run: mix coveralls --umbrella
+      env:
+        MIX_ENV: test
