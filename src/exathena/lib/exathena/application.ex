@@ -14,7 +14,8 @@ defmodule ExAthena.Application do
         ExAthena.Repo,
         ExAthenaWeb.Telemetry,
         {Phoenix.PubSub, name: ExAthena.PubSub},
-        ExAthenaWeb.Endpoint
+        ExAthenaWeb.Endpoint,
+        ExAthena.Vault
       ] ++ oban(env)
 
     opts = [strategy: :one_for_one, name: ExAthena.Supervisor]
