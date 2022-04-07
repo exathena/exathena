@@ -59,6 +59,37 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: bans; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.bans (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    banned_until timestamp(0) without time zone NOT NULL,
+    inserted_at timestamp(0) without time zone NOT NULL
+);
+
+
+--
+-- Name: bans_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.bans_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: bans_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.bans_id_seq OWNED BY public.bans.id;
+
+
+--
 -- Name: oban_jobs; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -181,6 +212,13 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
+-- Name: bans id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.bans ALTER COLUMN id SET DEFAULT nextval('public.bans_id_seq'::regclass);
+
+
+--
 -- Name: oban_jobs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -192,6 +230,14 @@ ALTER TABLE ONLY public.oban_jobs ALTER COLUMN id SET DEFAULT nextval('public.ob
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: bans bans_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.bans
+    ADD CONSTRAINT bans_pkey PRIMARY KEY (id);
 
 
 --
@@ -276,8 +322,17 @@ CREATE TRIGGER oban_notify AFTER INSERT ON public.oban_jobs FOR EACH ROW EXECUTE
 
 
 --
+-- Name: bans bans_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.bans
+    ADD CONSTRAINT bans_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
 INSERT INTO public."schema_migrations" (version) VALUES (20220405004620);
 INSERT INTO public."schema_migrations" (version) VALUES (20220405004906);
+INSERT INTO public."schema_migrations" (version) VALUES (20220407120351);

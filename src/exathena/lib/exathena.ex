@@ -35,6 +35,16 @@ defmodule ExAthena do
       alias Cloak.Ecto.SHA256
       alias Ecto.Changeset
       alias ExAthena.Encrypted.Binary
+
+      @typedoc """
+      The ecto association type with required value
+      """
+      @type required_assoc(schema) :: schema | %{__struct__: Ecto.Association.NotLoaded}
+
+      @typedoc """
+      The ecto association type
+      """
+      @type assoc(schema) :: schema | %{__struct__: Ecto.Association.NotLoaded} | nil
     end
   end
 

@@ -26,4 +26,15 @@ defmodule ExAthena.Factory do
       web_auth_token_enabled: true
     }
   end
+
+  def ban_factory do
+    banned_until =
+      Timex.now()
+      |> Timex.shift(days: 30)
+
+    %ExAthena.Accounts.Ban{
+      user: build(:user),
+      banned_until: banned_until
+    }
+  end
 end
