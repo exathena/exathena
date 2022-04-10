@@ -23,6 +23,7 @@ defmodule ExAthenaWeb.ConnCase do
       import ExAthena.Factory
       import ExAthena.TimeHelper
       import ExAthenaWeb.ConnCase
+      import Mox
       import Phoenix.ConnTest
       import Plug.Conn
 
@@ -30,6 +31,8 @@ defmodule ExAthenaWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint ExAthenaWeb.Endpoint
+
+      setup :verify_on_exit!
     end
   end
 

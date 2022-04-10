@@ -1,3 +1,9 @@
 {
-  "skip_files": ["lib/exathena/application.ex", "lib/exathena_web/*", "test/*"]
+  "skip_files": [
+    "lib/exathena_logger.ex",
+    "lib/exathena/application.ex",
+    "lib/exathena_web/*",
+    "lib/mix/*",
+    "test/*"
+  ]
 }

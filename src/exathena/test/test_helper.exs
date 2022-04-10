@@ -6,5 +6,6 @@ Faker.start()
 # Start the tests
 ExUnit.start()
 
-# Changes database mode to manula
+# Changes database mode to manual
 Ecto.Adapters.SQL.Sandbox.mode(ExAthena.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(ExAthenaLogger.Repo, :manual)

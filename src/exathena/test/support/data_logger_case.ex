@@ -1,4 +1,4 @@
-defmodule ExAthena.DataCase do
+defmodule ExAthenaLogger.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -16,26 +16,44 @@ defmodule ExAthena.DataCase do
 
   use ExUnit.CaseTemplate
 
+  @port 5489
+  @options [:binary, active: false]
+
   using do
     quote do
-      alias ExAthena.Repo
-
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import ExAthena.DataCase
-      import ExAthena.Factory
+      import ExAthenaLogger.DataCase
       import ExAthena.TimeHelper
+      import ExUnit.CaptureLog
       import Mox
+
+      alias ExAthenaLogger.Repo
+      alias ExAthena.Factory
+      alias ExAthenaLogger.Factory, as: LoggerFactory
 
       setup :verify_on_exit!
     end
   end
 
   setup tags do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthena.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
-    :ok
+    {:ok, server} = :gen_tcp.listen(@port, @options)
+    {:ok, socket} = :gen_tcp.connect('localhost', @port, @options)
+
+    pid_main = Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthena.Repo, shared: not tags[:async])
+
+    pid_logger =
+      Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthenaLogger.Repo, shared: not tags[:async])
+
+    on_exit(fn ->
+      Ecto.Adapters.SQL.Sandbox.stop_owner(pid_main)
+      Ecto.Adapters.SQL.Sandbox.stop_owner(pid_logger)
+      :ok = :gen_tcp.close(server)
+      :ok = :gen_tcp.close(socket)
+    end)
+
+    {:ok, socket: socket}
   end
 
   @doc """

@@ -1,13 +1,24 @@
 import Config
 
 # Configures the application
-config :exathena, clock_module: ExAthena.ClockMock
+config :exathena,
+  events_module: ExAthenaEventsMock,
+  clock_module: ExAthena.ClockMock,
+  logger_adapter: ExAthenaLoggerMock
 
-# Configure your database
+# Configure your databases
 config :exathena, ExAthena.Repo,
   username: "postgres",
   password: "postgres",
   database: "exathena_test",
+  hostname: "localhost",
+  pool: Ecto.Adapters.SQL.Sandbox,
+  pool_size: 10
+
+config :exathena, ExAthenaLogger.Repo,
+  username: "postgres",
+  password: "postgres",
+  database: "exathena_logger_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
@@ -22,7 +33,11 @@ config :exathena, ExAthenaWeb.Endpoint,
 config :exathena, ExAthena.Mailer, adapter: Swoosh.Adapters.Test
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :debug
+config :logger, :console, level: :warn
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Configures Pbkdf2
+config :pbkdf2_elixir, rounds: 1

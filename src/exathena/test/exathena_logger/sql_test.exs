@@ -1,0 +1,47 @@
+defmodule ExAthenaLogger.SqlTest do
+  use ExAthenaLogger.DataCase
+
+  alias ExAthenaLogger.Sql
+  alias ExAthenaLogger.Sql.AuthenticationLog
+
+  describe "[:exathena, :authentication, :log]" do
+    @describetag event: ~w(exathena authentication log)a
+
+    test "inserts the requested authentication log", %{event: event, socket: socket} do
+      meta = %{socket: socket, type: :request}
+
+      assert {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
+
+      assert {:ok, %AuthenticationLog{socket_fd: ^socket_fd}} =
+               Sql.handle_event(event, %{}, meta, [])
+    end
+
+    test "inserts the accepted authentication log", %{event: event, socket: socket} do
+      user = Factory.insert(:user)
+      meta = %{socket: socket, user: user, result: :accepted}
+
+      user_id = user.id
+
+      assert {:ok, %AuthenticationLog{user_id: ^user_id}} = Sql.handle_event(event, %{}, meta, [])
+    end
+
+    test "inserts the rejected authentication log", %{event: event, socket: socket} do
+      meta = %{socket: socket, result: :invalid_credentials}
+
+      assert {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
+
+      assert {:ok, %AuthenticationLog{socket_fd: ^socket_fd}} =
+               Sql.handle_event(event, %{}, meta, [])
+    end
+
+    test "inserts the user banned rejected authentication log", %{event: event, socket: socket} do
+      user = Factory.insert(:user)
+      banned_until = Factory.insert(:ban, user: user).banned_until
+      meta = %{socket: socket, user: user, banned_until: banned_until, result: :user_banned}
+
+      user_id = user.id
+
+      assert {:ok, %AuthenticationLog{user_id: ^user_id}} = Sql.handle_event(event, %{}, meta, [])
+    end
+  end
+end
