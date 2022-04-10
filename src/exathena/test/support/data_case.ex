@@ -26,6 +26,9 @@ defmodule ExAthena.DataCase do
       import ExAthena.DataCase
       import ExAthena.Factory
       import ExAthena.TimeHelper
+      import Mox
+
+      setup :verify_on_exit!
     end
   end
 
