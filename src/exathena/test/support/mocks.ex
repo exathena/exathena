@@ -1,6 +1,7 @@
 import Mox
 
 defmock(ExAthena.ClockMock, for: ExAthena.Clock)
+defmock(ExAthenaEventsMock, for: ExAthenaEvents.Behaviour)
 defmock(ExAthenaLoggerMock, for: ExAthenaLogger)
 
 defmodule FakeExAthenaLogger do

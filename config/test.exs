@@ -2,6 +2,7 @@ import Config
 
 # Configures the application
 config :exathena,
+  events_module: ExAthenaEventsMock,
   clock_module: ExAthena.ClockMock,
   logger_adapter: ExAthenaLoggerMock
 
