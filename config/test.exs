@@ -24,7 +24,8 @@ config :exathena, ExAthenaWeb.Endpoint,
 config :exathena, ExAthena.Mailer, adapter: Swoosh.Adapters.Test
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :debug
+config :logger, :console, level: :warn
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
