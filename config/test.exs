@@ -37,3 +37,6 @@ config :logger, :console, level: :warn
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Configures Pbkdf2
+config :pbkdf2_elixir, rounds: 1
