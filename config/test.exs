@@ -1,7 +1,9 @@
 import Config
 
 # Configures the application
-config :exathena, clock_module: ExAthena.ClockMock
+config :exathena,
+  clock_module: ExAthena.ClockMock,
+  logger_adapter: ExAthenaLoggerMock
 
 # Configure your database
 config :exathena, ExAthena.Repo,
