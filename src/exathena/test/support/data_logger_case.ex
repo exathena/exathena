@@ -29,6 +29,7 @@ defmodule ExAthenaLogger.DataCase do
       import ExUnit.CaptureLog
       import Mox
 
+      alias ExAthenaLogger.Repo
       alias ExAthena.Factory
 
       setup :verify_on_exit!
@@ -41,8 +42,12 @@ defmodule ExAthenaLogger.DataCase do
 
     pid_main = Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthena.Repo, shared: not tags[:async])
 
+    pid_logger =
+      Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthenaLogger.Repo, shared: not tags[:async])
+
     on_exit(fn ->
       Ecto.Adapters.SQL.Sandbox.stop_owner(pid_main)
+      Ecto.Adapters.SQL.Sandbox.stop_owner(pid_logger)
       :ok = :gen_tcp.close(server)
       :ok = :gen_tcp.close(socket)
     end)

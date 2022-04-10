@@ -3,6 +3,7 @@
     "lib/exathena_logger.ex",
     "lib/exathena/application.ex",
     "lib/exathena_web/*",
+    "lib/mix/*",
     "test/*"
   ]
 }

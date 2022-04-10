@@ -5,11 +5,19 @@ config :exathena,
   clock_module: ExAthena.ClockMock,
   logger_adapter: ExAthenaLoggerMock
 
-# Configure your database
+# Configure your databases
 config :exathena, ExAthena.Repo,
   username: "postgres",
   password: "postgres",
   database: "exathena_test",
+  hostname: "localhost",
+  pool: Ecto.Adapters.SQL.Sandbox,
+  pool_size: 10
+
+config :exathena, ExAthenaLogger.Repo,
+  username: "postgres",
+  password: "postgres",
+  database: "exathena_logger_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
