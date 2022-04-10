@@ -31,6 +31,7 @@ defmodule ExAthenaLogger.DataCase do
 
       alias ExAthenaLogger.Repo
       alias ExAthena.Factory
+      alias ExAthenaLogger.Factory, as: LoggerFactory
 
       setup :verify_on_exit!
     end
