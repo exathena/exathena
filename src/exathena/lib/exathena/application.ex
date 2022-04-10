@@ -22,6 +22,7 @@ defmodule ExAthena.Application do
         oban(env) ++
         logger_repo(env)
 
+    :ok = start_handlers(env)
 
     opts = [strategy: :one_for_one, name: ExAthena.Supervisor]
     Supervisor.start_link(children, opts)
@@ -41,6 +42,13 @@ defmodule ExAthena.Application do
       Sql -> [ExAthenaLogger.Repo]
       _ -> []
     end
+  end
+
+  defp start_handlers(:test), do: :ok
+
+  defp start_handlers(_) do
+    :ok = start_handlers(:test)
+    :ok = ExAthenaLogger.start_handlers()
   end
 
   @impl true
