@@ -5,6 +5,8 @@ defmodule ExAthena.Application do
 
   use Application
 
+  alias ExAthenaLogger.Sql
+
   @impl true
   def start(_type, _args) do
     env = Mix.env()
@@ -33,7 +35,13 @@ defmodule ExAthena.Application do
   end
 
   defp logger_repo(:test), do: [ExAthenaLogger.Repo]
-  defp logger_repo(_), do: []
+
+  defp logger_repo(_) do
+    case Application.get_env(:exathena, :logger_adapter) do
+      Sql -> [ExAthenaLogger.Repo]
+      _ -> []
+    end
+  end
 
   @impl true
   def config_change(changed, _new, removed) do
