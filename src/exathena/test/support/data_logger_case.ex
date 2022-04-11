@@ -21,6 +21,7 @@ defmodule ExAthenaLogger.DataCase do
 
   using do
     quote do
+      import Assertions
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
