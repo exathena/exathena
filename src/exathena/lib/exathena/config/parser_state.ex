@@ -131,8 +131,10 @@ defmodule ExAthena.Config.ParserState do
   end
 
   defp convert_boolean(value) when value in @true_boolean_words, do: true
-  defp convert_boolean(value) when value in @false_boolean_words, do: true
+  defp convert_boolean(value) when value in @false_boolean_words, do: false
+
   defp convert_decimal(value), do: Decimal.new(value)
+
   defp convert_integer(value), do: String.to_integer(value)
 
   defp convert_list(value) do

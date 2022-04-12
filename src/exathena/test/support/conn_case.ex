@@ -20,6 +20,7 @@ defmodule ExAthenaWeb.ConnCase do
   using do
     quote do
       # Import conveniences for testing with connections
+      import Assertions
       import ExAthena.Factory
       import ExAthena.TimeHelper
       import ExAthenaWeb.ConnCase

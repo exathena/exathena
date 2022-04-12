@@ -10,6 +10,7 @@ defmodule ExAthena.SocketCase do
     quote do
       alias ExAthena.Repo
 
+      import Assertions
       import Ecto
       import Ecto.Changeset
       import Ecto.Query

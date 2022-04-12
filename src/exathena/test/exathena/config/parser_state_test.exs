@@ -10,8 +10,16 @@ defmodule ExAthena.Config.ParserStateTest do
     end
 
     test "defines a boolean value" do
-      assert %State{result: {:ok, %{"key" => true}}} =
-               State.define_config(%State{}, "key", "true")
+      true_state = %State{result: {:ok, %{"key" => true}}}
+      false_state = %State{result: {:ok, %{"key" => false}}}
+
+      assert true_state == State.define_config(%State{}, "key", "yes")
+      assert true_state == State.define_config(%State{}, "key", "true")
+      assert true_state == State.define_config(%State{}, "key", "on")
+
+      assert false_state == State.define_config(%State{}, "key", "no")
+      assert false_state == State.define_config(%State{}, "key", "false")
+      assert false_state == State.define_config(%State{}, "key", "off")
     end
 
     test "defines a decimal value" do
