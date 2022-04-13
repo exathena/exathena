@@ -5,18 +5,21 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
-    env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/exathena_test
-
-    name: test
-    runs-on: ubuntu-latest
-
+  linux:
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        elixir: [1.12.3]
-        otp: [24.0.6]
+        elixir:
+          - 1.12.x
+          - 1.13.x
+        otp:
+          - 24.0.x
+          - 24.1.x
+          - 24.2.x
+          - 24.3.x
+
+    name: tests on Linux with elixir:${{ matrix.elixir }} and otp:${{ matrix.otp }}
+    runs-on: ubuntu-latest
 
     services:
       db:
@@ -47,22 +50,27 @@ jobs:
           _build
           tmp
           tmp/plts
-        key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
+        key: ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_
 
     - name: Install dependencies
-      if: steps.mix-cache.outputs.cache-hit != 'true'
-      run: |
-        mix deps.get
-        mix deps.compile
+      run: mix deps.get
+
+    - name: Check compilation (dev)
+      run: mix compile --warnings-as-errors
+      env:
+        MIX_ENV: dev
+
+    - name: Check compilation (test)
+      run: mix compile --warnings-as-errors
+      env:
+        MIX_ENV: test
 
     - name: Create dialyzer plt file
-      if: steps.mix-cache.outputs.cache-hit != 'true'
       run: |
         mkdir -p tmp/plts
         mix dialyzer --plt
-
-    - name: Check compilation
-      run: mix compile --warning-as-errors
 
     - name: Check format
       run: mix format --check-formatted
@@ -77,6 +85,221 @@ jobs:
       run: mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls --umbrella
+      run: mix coveralls.json --umbrella
+      env:
+        MIX_ENV: test
+
+  macos:
+    strategy:
+      fail-fast: true
+      matrix:
+        elixir:
+          - 1.12.3
+          - 1.13.4
+
+    name: tests on macOS with elixir:${{ matrix.elixir }} and latest otp
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Erlang
+      run: |
+        brew update
+        brew install erlang
+
+    - name: Set up ASDF
+      run: |
+        brew update
+        brew install asdf
+        asdf plugin-add elixir
+        echo "$HOME/.asdf/shims" >> $GITHUB_PATH
+
+    - name: Set up Elixir
+      run: |
+        asdf install elixir ${{ matrix.elixir }}
+        asdf global elixir ${{ matrix.elixir }}
+        asdf reshim
+        mix local.rebar --force
+        mix local.hex --force
+
+    - name: Set up Postgres
+      run: |
+        brew services start postgresql
+        echo "Check PostgreSQL service is running"
+        i=10
+        COMMAND='pg_isready'
+        while [ $i -gt 0 ]; do
+            echo "Check PostgreSQL service status"
+            eval $COMMAND && break
+            ((i--))
+            if [ $i == 0 ]; then
+                echo "PostgreSQL service not ready, all attempts exhausted"
+                exit 1
+            fi
+            echo "PostgreSQL service not ready, wait 10 more sec, attempts left: $i"
+            sleep 10
+        done
+
+    - name: Create postgres user at PostgreSQL
+      run: |
+        psql --command="CREATE USER postgres PASSWORD 'postgres'" --command="\du" postgres
+        psql --command="ALTER USER postgres WITH SUPERUSER" --command="\du" postgres
+
+    - name: Restore dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          deps
+          _build
+          tmp
+          tmp/plts
+        key: ${{ runner.os }}_latest-otp_${{ matrix.elixir }}-mix_${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          ${{ runner.os }}_latest-otp_${{ matrix.elixir }}-mix_
+
+    - name: Install dependencies
+      run: mix deps.get
+
+    - name: Check compilation (dev)
+      run: mix compile --warnings-as-errors
+      env:
+        MIX_ENV: dev
+
+    - name: Check compilation (test)
+      run: mix compile --warnings-as-errors
+      env:
+        MIX_ENV: test
+
+    - name: Create dialyzer plt file
+      run: |
+        mkdir -p tmp/plts
+        mix dialyzer --plt
+
+    - name: Check format
+      run: mix format --check-formatted
+
+    - name: Run type check
+      run: mix dialyzer
+
+    - name: Analyze code
+      run: mix credo -a
+
+    - name: Analyse security
+      run: mix sobelow
+
+    - name: Run tests & code coverage
+      run: mix coveralls.json --umbrella
+      env:
+        MIX_ENV: test
+
+  windows:
+    strategy:
+      fail-fast: true
+      matrix:
+        elixir:
+          - 1.12.x
+          - 1.13.x
+        otp:
+          - 24.0.x
+          - 24.1.x
+          - 24.2.x
+          - 24.3.x
+
+    name: tests on Windows with elixir:${{ matrix.elixir }} and otp:${{ matrix.otp }}
+    runs-on: windows-latest
+
+    steps:
+    - name: Configure Git
+      run: git config --global core.autocrlf input
+
+    - uses: actions/checkout@v2
+
+    - name: Set up Elixir
+      uses: erlef/setup-elixir@v1
+      with:
+        elixir-version: ${{ matrix.elixir }}
+        otp-version: ${{ matrix.otp }}
+
+    - name: Start epmd (only for 24.0.x)
+      if: ${{ matrix.otp == '24.0.x' }}
+      run: cmd /c "START /b epmd"
+      working-directory: ${{ env.INSTALL_DIR_FOR_OTP }}/erts-12.0.4/bin
+
+    - name: Start epmd (only for 24.1.x)
+      if: ${{ matrix.otp == '24.1.x' }}
+      run: cmd /c "START /b epmd"
+      working-directory: ${{ env.INSTALL_DIR_FOR_OTP }}/erts-12.1.5/bin
+
+    - name: Start epmd (only for 24.2.x)
+      if: ${{ matrix.otp == '24.2.x' }}
+      run: cmd /c "START /b epmd"
+      working-directory: ${{ env.INSTALL_DIR_FOR_OTP }}/erts-12.2.1/bin
+
+    - name: Start epmd (only for 24.3.x)
+      if: ${{ matrix.otp == '24.3.x' }}
+      run: cmd /c "START /b epmd"
+      working-directory: ${{ env.INSTALL_DIR_FOR_OTP }}/erts-12.3.1/bin
+
+    # Add tar that supports symlinks, see https://github.com/actions/virtual-environments/issues/4679
+    - name: Add tar.exe
+      run: |
+        "C:\Program Files\Git\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
+
+    - name: Set up Postgres
+      run: |
+        $pgService = Get-Service -Name postgresql*
+        Set-Service -InputObject $pgService -Status running -StartupType automatic
+        Start-Process -FilePath "$env:PGBIN\pg_isready" -Wait -PassThru
+        echo "$env:PGBIN" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    - name: Create postgres user at PostgreSQL
+      run: |
+        & $env:PGBIN\psql --command="ALTER USER postgres WITH PASSWORD 'postgres'" --command="\du"
+
+    - name: Restore dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          deps
+          _build
+          tmp
+          tmp/plts
+        key: ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_
+
+    - name: Install dependencies
+      run: mix deps.get
+
+    - name: Check compilation (dev)
+      run: mix compile --warnings-as-errors
+      env:
+        MIX_ENV: dev
+
+    - name: Check compilation (test)
+      run: mix compile --warnings-as-errors
+      env:
+        MIX_ENV: test
+
+    - name: Create dialyzer plt file
+      run: |
+        New-Item -ItemType Directory -Force -Path .\tmp\plts
+        mix dialyzer --plt
+
+    - name: Check format
+      run: mix format --check-formatted
+
+    - name: Run type check
+      run: mix dialyzer
+
+    - name: Analyze code
+      run: mix credo -a
+
+    - name: Analyse security
+      run: mix sobelow
+
+    - name: Run tests & code coverage
+      run: mix coveralls.json --umbrella
       env:
         MIX_ENV: test
