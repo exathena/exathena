@@ -1,0 +1,86 @@
+name: continuous delivery
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  test:
+    name: Run CI and publish new version on hex
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:13.1
+        ports: ['5432:5432']
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Elixir
+      uses: erlef/setup-elixir@v1
+      with:
+        elixir-version: 1.12.3
+        otp-version: 24.0.6
+
+    - name: Restore dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          deps
+          _build
+          tmp
+          tmp/plts
+        key: ${{ runner.os }}_24.0.6_1.12.3-mix_${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          Linux_24.0.6_1.12.3-mix_
+
+    - name: Install dependencies
+      run: mix deps.get
+
+    - name: Check compilation (dev)
+      run: mix compile --warnings-as-errors
+      env:
+        MIX_ENV: dev
+
+    - name: Check compilation (test)
+      run: mix compile --warnings-as-errors
+      env:
+        MIX_ENV: test
+
+    - name: Create dialyzer plt file
+      run: |
+        mkdir -p tmp/plts
+        mix dialyzer --plt
+
+    - name: Check format
+      run: mix format --check-formatted
+
+    - name: Run type check
+      run: mix dialyzer
+
+    - name: Analyze code
+      run: mix credo -a
+
+    - name: Analyse security
+      run: mix sobelow
+
+    - name: Run tests & code coverage
+      run: mix coveralls --umbrella
+      env:
+        MIX_ENV: test
+
+    - name: Publish package to hex
+      env:
+        HEX_AUTH_KEY: ${{ secrets.HEX_AUTH_KEY }}
+      run: |
+        mix hex.config api_key $HEX_AUTH_KEY
+        mix hex.publish --yes
