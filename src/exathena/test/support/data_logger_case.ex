@@ -30,9 +30,9 @@ defmodule ExAthenaLogger.DataCase do
       import ExUnit.CaptureLog
       import Mox
 
-      alias ExAthenaLogger.Repo
       alias ExAthena.Factory
       alias ExAthenaLogger.Factory, as: LoggerFactory
+      alias ExAthenaLogger.Repo
 
       setup :verify_on_exit!
     end
