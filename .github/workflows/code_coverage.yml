@@ -73,6 +73,11 @@ jobs:
       run: cd src/exathena && mix sobelow
 
     - name: Run tests & code coverage
+      run: mix coveralls --umbrella
+      env:
+        MIX_ENV: test
+
+    - name: Build code coverage report
       run: mix coveralls.json --umbrella
       env:
         MIX_ENV: test
