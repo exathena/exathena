@@ -17,12 +17,12 @@ defmodule ExAthena.Application do
         ExAthenaWeb.Telemetry,
         {Phoenix.PubSub, name: ExAthena.PubSub},
         ExAthenaWeb.Endpoint,
-        ExAthena.Vault,
-        {Registry, keys: :unique, name: ExAthena.Config.Registry}
+        ExAthena.Vault
       ] ++
         oban(env) ++
         logger_repo(env) ++
-        start_configs(env)
+        start_configs(env) ++
+        start_databases(env)
 
     :ok = start_handlers(env)
 
@@ -57,6 +57,12 @@ defmodule ExAthena.Application do
 
   defp start_configs(_) do
     [ExAthena.Config]
+  end
+
+  defp start_databases(:test), do: []
+
+  defp start_databases(_) do
+    [ExAthena.Database]
   end
 
   @impl true
