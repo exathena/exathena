@@ -5,6 +5,10 @@ defmodule ExAthena.Accounts do
   use ExAthena, :context
 
   alias ExAthena.Accounts.{Ban, User}
+  alias ExAthena.Config
+  alias ExAthena.Config.LoginAthena
+  alias ExAthena.Database
+  alias ExAthena.Database.Group
 
   @doc """
   Gets a single user.
@@ -156,9 +160,15 @@ defmodule ExAthena.Accounts do
       {:error, :user_banned, ~U[2022-04-07 16:37:44.783000Z]}
 
   """
+  # TODO: Check user account expiration date
+  # TODO: Check user state (wtf is this?)
+  # TODO: Check user denylist
+  # TODO: Check if char-server is up to return list of online servers
   @spec authorize_user(User.t()) :: :ok | {:error, :user_banned, DateTime.t()}
   def authorize_user(user = %User{}) do
-    check_user_ban(user)
+    with :ok <- check_user_ban(user) do
+      check_user_role(user)
+    end
   end
 
   @doc """
@@ -185,6 +195,67 @@ defmodule ExAthena.Accounts do
     case Repo.one(query) do
       nil -> :ok
       %Ban{banned_until: banned_until} -> {:error, :user_banned, banned_until}
+    end
+  end
+
+  @doc """
+  Checks if the given user is authorized to
+  connect with his current role.
+
+  ## Examples
+
+      iex> check_user_role(%User{})
+      :ok
+
+      iex> check_user_role(%User{})
+      {:error, :unauthorized}
+
+      # When LoginAthenaConfig didn't start yet
+      # or GroupsDb didn't start yet
+      iex> check_user_role(%User{})
+      {:error, :internal_server_error}
+
+  """
+  @spec check_user_role(User.t()) :: :ok | {:error, :unauthorized | :internal_server_error}
+  def check_user_role(user = %User{}) do
+    case Config.login_athena() do
+      {:ok, %LoginAthena{min_group_id_to_connect: -1, group_id_to_connect: -1}} ->
+        :ok
+
+      {:ok, %LoginAthena{min_group_id_to_connect: -1, group_id_to_connect: group_id}} ->
+        check_only_role(group_id, user)
+
+      {:ok, %LoginAthena{min_group_id_to_connect: group_id, group_id_to_connect: -1}} ->
+        check_min_role(group_id, user)
+
+      {:error, _} ->
+        {:error, :internal_server_error}
+    end
+  end
+
+  defp check_only_role(group_id, user) do
+    case Database.get_by(PlayerGroupDb, role: user.role) do
+      {:ok, %Group{id: ^group_id}} ->
+        :ok
+
+      {:ok, %Group{}} ->
+        {:error, :unauthorized}
+
+      {:error, _} ->
+        {:error, :internal_server_error}
+    end
+  end
+
+  defp check_min_role(group_id, user) do
+    case Database.get_by(PlayerGroupDb, role: user.role) do
+      {:ok, %Group{id: current_group_id}} when current_group_id >= group_id ->
+        :ok
+
+      {:ok, %Group{}} ->
+        {:error, :unauthorized}
+
+      {:error, _} ->
+        {:error, :internal_server_error}
     end
   end
 end
