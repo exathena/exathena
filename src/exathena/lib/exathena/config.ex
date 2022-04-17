@@ -41,7 +41,7 @@ defmodule ExAthena.Config do
 
       {:ok, %{state | data: config}}
     else
-      error = {:error, reason} ->
+      {:error, reason} ->
         Logger.error("Failed to read #{Path.basename(state.path)}",
           config_id: state.id,
           config: inspect(state),
@@ -49,7 +49,7 @@ defmodule ExAthena.Config do
           error_detail: inspect(reason)
         )
 
-        error
+        {:stop, reason}
     end
   end
 
