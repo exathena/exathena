@@ -27,7 +27,7 @@ defmodule ExAthena.ConfigTest do
       assert entry = %Entry{data: nil} = build(:config_entry, path: "foo/bar.conf")
 
       func = fn ->
-        assert {:error, :invalid_path} = Config.init(entry)
+        assert {:stop, :invalid_path} = Config.init(entry)
       end
 
       captured_log = capture_log(func)
@@ -41,7 +41,7 @@ defmodule ExAthena.ConfigTest do
       assert entry = %Entry{data: nil} = build(:config_entry, path: @invalid_format_config_file)
 
       func = fn ->
-        assert {:error, :invalid_format} = Config.init(entry)
+        assert {:stop, :invalid_format} = Config.init(entry)
       end
 
       captured_log = capture_log(func)
@@ -68,14 +68,11 @@ defmodule ExAthena.ConfigTest do
       refute captured_log =~ "Failed to read #{Path.basename(entry.path)}"
     end
 
-    # FIXME: Verify this test, sometimes it fails:
-    # - on Linux with elixir:1.12.x and otp:24.3.x
-    @tag skip: true
     test "returns error when file has invalid path" do
       assert entry = %Entry{data: nil} = build(:config_entry, path: "foo/bar.conf")
 
       func = fn ->
-        assert {:error, {:bad_return_value, {:error, :invalid_path}}} = Config.start_link(entry)
+        assert {:error, :invalid_path} = Config.start_link(entry)
       end
 
       captured_log = capture_log(func)
@@ -85,18 +82,11 @@ defmodule ExAthena.ConfigTest do
       assert captured_log =~ "Failed to read #{Path.basename(entry.path)}"
     end
 
-    # FIXME: Verify this test, sometimes it fails:
-    # - on Linux with elixir:1.13.x and otp:24.0.x
-    # - on Linux with elixir:1.13.x and otp:24.1.x
-    # - on Linux with elixir:1.12.x and otp:24.0.x
-    # - on Linux with elixir:1.12.x and otp:24.1.x
-    # - on Linux with elixir:1.12.x and otp:24.2.x
-    @tag skip: true
     test "returns error when file has invalid format" do
       assert entry = %Entry{data: nil} = build(:config_entry, path: @invalid_format_config_file)
 
       func = fn ->
-        assert {:error, {:bad_return_value, {:error, :invalid_format}}} = Config.start_link(entry)
+        assert {:error, :invalid_format} = Config.start_link(entry)
       end
 
       captured_log = capture_log(func)
