@@ -14,6 +14,7 @@ config :exathena, ExAthena.Repo,
   password: "postgres",
   database: "exathena_test",
   hostname: "localhost",
+  log: false,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
@@ -22,6 +23,7 @@ config :exathena, ExAthenaLogger.Repo,
   password: "postgres",
   database: "exathena_logger_test",
   hostname: "localhost",
+  log: false,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
