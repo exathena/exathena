@@ -59,6 +59,7 @@ defmodule ExAthena.MixProject do
       {:swoosh, "~> 1.3"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
+      {:temporary_env, "~> 2.0"},
       {:timex, "~> 3.7"}
     ]
   end
