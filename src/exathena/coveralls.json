@@ -3,6 +3,8 @@
     "lib/exathena.ex",
     "lib/exathena/application.ex",
     "lib/exathena/clock.ex",
+    "lib/exathena/io/exceptions.ex",
+    "lib/exathena/io/item.ex",
     "lib/exathena_logger.ex",
     "lib/exathena_web/*",
     "lib/mix/*",

@@ -56,7 +56,7 @@ defmodule ExAthena.Application do
   defp start_configs(:test), do: []
 
   defp start_configs(_) do
-    ExAthena.Config.start_configs()
+    [ExAthena.Config]
   end
 
   @impl true
