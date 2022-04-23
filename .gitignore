@@ -39,6 +39,9 @@ node_modules/
 # Ignore deployment configs
 deploy/configs/
 
+# Ignore ASDF
+.tool-versions
+
 # Ignore Dialyzer plts
 tmp/
 .plt
