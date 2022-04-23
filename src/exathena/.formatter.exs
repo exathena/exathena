@@ -1,6 +1,10 @@
 # Used by "mix format"
 
 locals_without_parens = [
+  # IO
+  configure: 2,
+  item: 2,
+
   # Tests
   assert_changeset: 1,
   refute_changeset: 1,

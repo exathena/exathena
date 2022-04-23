@@ -1,7 +1,7 @@
-defmodule ExAthena.Config.ParserStateTest do
+defmodule ExAthena.IO.ConfParser.StateTest do
   use ExAthena.DataCase
 
-  alias ExAthena.Config.ParserState, as: State
+  alias ExAthena.IO.ConfParser.State
 
   describe "define_config/3" do
     test "defines a config key with given value" do

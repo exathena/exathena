@@ -1,10 +1,10 @@
-defmodule ExAthena.Config.Parser do
+defmodule ExAthena.IO.ConfParser do
   @moduledoc """
-  The ExAthena Config parser.
+  The ExAthena `.conf` parser.
   """
   require Logger
 
-  alias ExAthena.Config.ParserState, as: State
+  alias ExAthena.IO.ConfParser.State
 
   @double_slash_comment_regex ~r{^\/\/.*}
   @colon_definition_regex ~r{([^:]+):(.*)}
@@ -15,33 +15,42 @@ defmodule ExAthena.Config.Parser do
 
   ## Examples
 
-      iex> parse_config("./settings/login_athena.conf")
+      iex> parse_config("login_athena.conf")
       {:ok, %{login_port: 6900, stdout_with_ansisequence: false, ...}}
 
-      iex> parse_config("/some/long/path/to/settings/login_athena.conf")
-      {:ok, %{login_port: 6900, stdout_with_ansisequence: false, ...}}
-
-      iex> parse_config("./settings/empty.conf")
+      iex> parse_config("empty.conf")
       {:ok, %{}}
 
-      iex> parse_config("./settings/invalid_format.conf")
+      iex> parse_config("invalid_format.conf")
       {:error, :invalid_format}
 
-      iex> parse_config("./settings/foo.conf")
+      iex> parse_config("foo.conf")
       {:error, :invalid_path}
 
   """
   @spec parse_config(String.t()) :: {:ok, map()} | {:error, :invalid_format | :invalid_path}
   def parse_config(config_path) when is_binary(config_path) do
-    with :ok <- check_file_existence(config_path) do
-      read_and_parse_file(config_path)
+    base_path = Application.get_env(:exathena, :settings_path, "")
+
+    path =
+      [base_path, "settings", config_path]
+      |> Path.join()
+      |> Path.expand()
+      |> Path.absname()
+
+    with :ok <- check_file_existence(path) do
+      read_and_parse_file(path)
     end
   end
 
   defp check_file_existence(config_path) do
-    if File.exists?(config_path),
-      do: :ok,
-      else: {:error, :invalid_path}
+    if File.exists?(config_path) do
+      :ok
+    else
+      Logger.error("Failed to parse #{config_path} due to invalid_path")
+
+      {:error, :invalid_path}
+    end
   end
 
   defp read_and_parse_file(config_path) do
@@ -66,6 +75,7 @@ defmodule ExAthena.Config.Parser do
     Enum.reduce_while(file_stream, %State{file_name: config_path}, &parse_line/2)
   end
 
+  # TODO: Implement the `:imports` reading
   defp parse_line(_line, state = %State{result: {:error, _}}) do
     {:halt, state}
   end

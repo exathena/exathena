@@ -42,17 +42,6 @@ defmodule ExAthena.ConfigFactory do
           ipban_dynamic_pass_failure_ban_duration: 5
         }
       end
-
-      def config_entry_factory do
-        %ExAthena.Config.Entry{
-          id: :login_athena,
-          name: LoginAthenaConfig,
-          type: :server,
-          path: "../../settings/login_athena.conf",
-          reload?: true,
-          schema: ExAthena.Config.LoginAthena
-        }
-      end
     end
   end
 end

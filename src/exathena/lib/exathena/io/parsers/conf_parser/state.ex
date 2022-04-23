@@ -1,4 +1,4 @@
-defmodule ExAthena.Config.ParserState do
+defmodule ExAthena.IO.ConfParser.State do
   @moduledoc false
   alias __MODULE__, as: State
 
