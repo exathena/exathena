@@ -57,7 +57,7 @@ defmodule ExAthena.Config.LoginAthena do
   @allowed_console_silent ~w(none info status notice warn error debug)a
 
   @primary_key false
-  embedded_schema do
+  schema "login_athena.conf" do
     field :date_format, :string, default: "%Y-%m-%d %H:%M:%S"
     field :min_group_id_to_connect, :integer, default: -1
     field :vip_group, :integer, integer: 5
