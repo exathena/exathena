@@ -2,6 +2,7 @@ defmodule ExAthena.Factory do
   @moduledoc false
   use ExMachina.Ecto, repo: ExAthena.Repo
   use ExAthena.ConfigFactory
+  use ExAthena.DatabaseFactory
 
   def user_factory do
     web_auth_token = Faker.String.base64()

@@ -85,3 +85,47 @@ defmodule InvalidFormatConfig do
   schema "partial_valid_config.conf" do
   end
 end
+
+defmodule InvalidDatabase do
+  use ExAthena.Database
+
+  @allowed_roles ~w(super_player)a
+
+  @fields ~w(id name role level inherit log_commands? commands permissions)a
+  @required_fields ~w(id name role)a
+
+  @primary_key {:id, :integer, source: :Id}
+
+  schema "groups_db.yml" do
+    field :name, :string, source: :Name
+    field :role, Ecto.Enum, values: @allowed_roles, source: :Role
+    field :level, :integer, source: :Level
+    field :log_commands?, :boolean, source: :LogCommands
+    field :inherit, {:array, :string}, source: :Inherit
+    field :commands, :map, source: :Commands
+    field :char_commands, :map, source: :CharCommands
+    field :permissions, :map, source: :Permissions
+  end
+
+  @doc false
+  def changeset(group = %__MODULE__{}, attrs) do
+    group
+    |> cast(parse_attrs(attrs), @fields)
+    |> validate_inclusion(:role, @allowed_roles)
+    |> validate_required(@required_fields)
+  end
+end
+
+defmodule InvalidFormatDatabase do
+  use ExAthena, :schema
+
+  schema "invalid_format.yml" do
+  end
+end
+
+defmodule InvalidPathDatabase do
+  use ExAthena, :schema
+
+  schema "foo.yml" do
+  end
+end

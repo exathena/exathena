@@ -3,6 +3,7 @@ import Config
 # Configures the application
 config :exathena,
   settings_path: Path.expand(""),
+  database_path: Path.expand(""),
   events_module: ExAthenaEventsMock,
   clock_module: ExAthena.ClockMock,
   logger_adapter: ExAthenaLoggerMock
