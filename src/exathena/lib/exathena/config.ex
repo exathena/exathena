@@ -7,7 +7,7 @@ defmodule ExAthena.Config do
   """
   use ExAthena.IO
 
-  alias ExAthena.Config.LoginAthena
+  alias ExAthena.Config.{LoginAthena, SubnetAthena}
 
   configure :conf do
     item :login_athena,
@@ -15,5 +15,11 @@ defmodule ExAthena.Config do
       category: :server,
       reload?: false,
       schema: LoginAthena
+
+    item :subnet_athena,
+      name: SubnetAthenaConfig,
+      category: :server,
+      reload?: false,
+      schema: SubnetAthena
   end
 end
