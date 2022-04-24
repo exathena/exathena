@@ -1,0 +1,297 @@
+# Player groups configuration file
+# ---------------------------------
+#
+# This file defines "player groups" and their privileges.
+#
+# Each group has its id and name, lists of available commands and other
+# Permissions, and a list of other groups it inherits from.
+#
+#
+# Group settings
+# --------------
+# <Id>
+# Unique group number. The only required field.
+#
+# <Name>
+# Any string. If empty, defaults to "Group <id>". It is used in several @who
+# commands.
+#
+# <Role>
+# The name atom, with snake case. It is required and used in "users" table.
+# See more in "src/exathena/lib/exathena/accounts/user.ex".
+#
+# <Level>
+# Equivalent of GM level, which was used in revisions before r15572. You can
+# set it to any number, but usually it's between 0 (default) and 99. Members of
+# groups with lower level can not perform some actions/commands (like @kick) on
+# members of groups with higher level. It is what script command getgmlevel()
+# returns. Group level can also be used to override trade restrictions
+# (db/item_trade.txt).
+#
+# <Commands>
+# A group of settings
+# 	<command_name>: <bool>
+# or
+# 	<command_name>:
+# 	  - <bool>
+# 	  - <bool>
+# First boolean value is for atcommand, second one for charcommand. If set to
+# true, group can use command. If only atcommand value is provided, false is
+# assumed for charcommand. If a command name is not included, false is assumed for
+# both atcommand and charcommand.
+# For a full list of available commands, see: doc/atcommands.txt.
+# Command names must not be aliases.
+#
+# <LogCommands>
+# Boolean value. If true then all commands used by the group will be logged to
+# atcommandlog. If setting is omitted in a group definition, false is assumed.
+# Requires 'LogCommands' to be enabled in 'conf/log_athena.conf'.
+#
+# <Permissions>
+# A group of settings
+# 	<permission> : <bool>
+# If a permission is not included, false is assumed.
+# For a full list of available Permissions, see: doc/Permissions.txt
+#
+# <Inherit>
+# A list of group names that given group will inherit commands and Permissions
+# from. Group names are case-sensitive.
+#
+# Inheritance results
+# -------------------
+# Both multiple inheritance (Group 2 -> Group 1 and Group 3 -> Group 1) and
+# recursive inheritance (Group 3 -> Group 2 -> Group 1) are allowed.
+#
+# Inheritance rules should not create cycles (eg Group 1 inherits from Group 2,
+# and Group inherits from Group 1 at the same time). Configuration with cycles is
+# considered faulty and can't be processed fully by server.
+#
+# Command or permission is inherited ONLY if it's not already defined for the
+# group.
+# If group inherits from multiple groups, and the same command or permission is
+# defined for more than one of these groups, it's undefined which one will be
+# inherited.
+
+Header:
+  Type: GROUPS_DB
+  Version: 1
+
+Body:
+  # Group 0 is the default group for every new account
+  - Id: 0
+    Name: Player
+    Role: player
+    Level: 0
+    Commands:
+      changedress: true
+      resurrect: true
+    Permissions:
+      can_trade: true
+      can_party: true
+      attendance: true
+  - Id: 1
+    Name: Super Player
+    Role: super_player
+    Inherit:
+      # Can do everything Players can and more
+      - Player
+    Level: 0
+    Commands:
+      # Informational commands
+      commands: true
+      charcommands: true
+      help: true
+      rates: true
+      uptime: true
+      showdelay: true
+      exp: true
+      mobinfo: true
+      iteminfo: true
+      whodrops: true
+      time: true
+      jailtime: true
+      hominfo: true
+      homstats: true
+      showexp: true
+      showzeny: true
+      whereis: true
+
+      # Feature commands
+      refresh: true
+      noask: true
+      noks: true
+      autoloot: true
+      alootid: true
+      autoloottype: true
+      autotrade: true
+      request: true
+      go: true
+      breakguild: true
+      channel: true
+      langtype: true
+    Permissions:
+      attendance: false
+  - Id: 2
+    Name: Support
+    Role: support
+    Inherit:
+      - Super Player
+    Level: 1
+    Commands:
+      version: true
+      where: true
+      jumpto: true
+      who: true
+      who2: true
+      who3: true
+      whomap: true
+      whomap2: true
+      whomap3: true
+      users: true
+      broadcast: true
+      localbroadcast: true
+    LogCommands: true
+    Permissions:
+      receive_requests: true
+      view_equipment: true
+  - Id: 3
+    Name: Script Manager
+    Role: script_manager
+    Inherit:
+      - Support
+    Level: 1
+    Commands:
+      tonpc: true
+      hidenpc: true
+      shownpc: true
+      loadnpc: true
+      unloadnpc: true
+      npcmove: true
+      addwarp: true
+    LogCommands: true
+    Permissions:
+      any_warp: true
+  - Id: 4
+    Name: Event Manager
+    Role: event_manager
+    Inherit:
+      - Support
+    Level: 1
+    Commands:
+      monster: true
+      monstersmall: true
+      monsterbig: true
+      killmonster2: true
+      cleanarea: true
+      cleanmap: true
+      item:
+        - true
+        - true
+      zeny:
+        - true
+        - true
+      disguise:
+        - true
+        - true
+      undisguise:
+        - true
+        - true
+      size:
+        - true
+        - true
+      raise: true
+      raisemap: true
+      day: true
+      night: true
+      skillon: true
+      skilloff: true
+      pvpon: true
+      pvpoff: true
+      gvgon: true
+      gvgoff: true
+      allowks: true
+      me: true
+      marry: true
+      divorce: true
+      refreshall: true
+    LogCommands: true
+    Permissions:
+      can_trade: false
+      any_warp: true
+  - Id: 5
+    Name: VIP
+    Role: vip
+    Inherit:
+      # Can do everything Players can
+      - Player
+    Level: 0
+    Commands:
+      rates: true
+      who: true
+    # No permissions by default
+    Permissions:
+  - Id: 10
+    Name: Law Enforcement
+    Role: law_enforcement
+    Inherit:
+      - Support
+    Level: 2
+    Commands:
+      hide: true
+      follow: true
+      kick: true
+      disguise: true
+      fakename: true
+      option: true
+      speed: true
+      warp: true
+      kill: true
+      recall: true
+      ban: true
+      block: true
+      jail: true
+      jailfor: true
+      mute: true
+      storagelist: true
+      cartlist: true
+      itemlist: true
+      stats: true
+    LogCommands: true
+    Permissions:
+      join_chat: true
+      kick_chat: true
+      hide_session: true
+      who_display_aid: true
+      hack_info: true
+      any_warp: true
+      view_hpmeter: true
+  - Id: 99
+    Name: Admin
+    Role: admin
+    Level: 99
+    Inherit:
+      - Support
+      - Law Enforcement
+    # Not necessary due to all_commands: true
+    Commands:
+    LogCommands: true
+    Permissions:
+      can_trade: true
+      can_party: true
+      command_enable: true
+      all_skill: false
+      all_equipment: false
+      skill_unconditional: false
+      use_check: true
+      use_changemaptype: true
+      all_commands: true
+      channel_admin: true
+      can_trade_bounded: true
+      item_unconditional: false
+      bypass_stat_onclone: true
+      bypass_max_stat: true
+      # all_permission: true
+
+Footer:
+  Imports:
+    - Path: settings/import/groups.yml

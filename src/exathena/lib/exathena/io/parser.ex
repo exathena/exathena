@@ -6,7 +6,7 @@ defmodule ExAthena.IO.Parser do
   """
 
   alias Ecto.Changeset
-  alias ExAthena.IO.ConfParser
+  alias ExAthena.IO.{ConfParser, YamlParser}
 
   @doc """
   Loads the data from given module based on given configuration type.
@@ -43,6 +43,24 @@ defmodule ExAthena.IO.Parser do
       {:ok, attrs} -> build_schema(attrs, module)
       error = {:error, _} -> error
     end
+  end
+
+  def load(:yaml, module) do
+    yaml_path = module.__schema__(:source)
+
+    case YamlParser.parse_yaml(yaml_path) do
+      {:ok, list_of_attrs = [_ | _]} -> build_schemas(list_of_attrs, module)
+      error = {:error, _} -> error
+    end
+  end
+
+  defp build_schemas(list_of_attrs = [_ | _], module) do
+    Enum.reduce_while(list_of_attrs, {:ok, []}, fn attrs, {:ok, acc} ->
+      case build_schema(attrs, module) do
+        {:ok, struct} -> {:cont, {:ok, acc ++ [struct]}}
+        error = {:error, _changeset} -> {:halt, error}
+      end
+    end)
   end
 
   defp build_schema(attrs, module) do

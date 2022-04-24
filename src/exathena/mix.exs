@@ -60,7 +60,8 @@ defmodule ExAthena.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:temporary_env, "~> 2.0"},
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
+      {:yaml_elixir, "~> 2.8"}
     ]
   end
 

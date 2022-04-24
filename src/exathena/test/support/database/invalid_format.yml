@@ -1,0 +1,12 @@
+- Id: 0
+  Name: Player
+  Role: player
+  Level: 0
+  Commands:
+  changedress: true
+  resurrect: true
+  Permissions:
+  can_trade: true
+  can_party: true
+  attendance: true
+
