@@ -8,6 +8,7 @@ defmodule ExAthena.Config.LoginAthena do
   The Exathena `login_athena.conf` type.
   """
   @type t :: %__MODULE__{
+          bind_ip: String.t(),
           date_format: String.t(),
           min_group_id_to_connect: integer(),
           vip_group: non_neg_integer(),
@@ -51,6 +52,7 @@ defmodule ExAthena.Config.LoginAthena do
     ipban_dynamic_pass_failure_ban_duration console_log_filepath time_allowed use_MD5_passwords
     ipban_dynamic_pass_failure_ban_interval new_account usercount_disable use_web_auth_token login_port start_limited_time
     ipban_cleanup_interval console_msg_log login_log_filename chars_per_account ipban_enable usercount_low
+    bind_ip
   )a
 
   @allowed_logger_level ~w(info debug warn error)a
@@ -58,6 +60,7 @@ defmodule ExAthena.Config.LoginAthena do
 
   @primary_key false
   schema "login_athena.conf" do
+    field :bind_ip, :string, default: "127.0.0.1"
     field :date_format, :string, default: "%Y-%m-%d %H:%M:%S"
     field :min_group_id_to_connect, :integer, default: -1
     field :vip_group, :integer, integer: 5

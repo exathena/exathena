@@ -61,7 +61,7 @@ defmodule ExAthenaApp.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup"],
-      "ecto.setup": ["ecto.create", "ecto.load.main", "exathena.load", "run sql-files/seeds.exs"],
+      "ecto.setup": ["ecto.create", "exathena.load", "run sql-files/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       sobelow: ["sobelow -r src/exathena"],
       test: ["ecto.drop -q", "ecto.create -q", "exathena.load -q", "test"]

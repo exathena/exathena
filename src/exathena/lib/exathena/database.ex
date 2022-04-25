@@ -68,7 +68,12 @@ defmodule ExAthena.Database do
 
   """
   @spec all(module(), keyword()) :: list(Ecto.Schema.t())
-  def all(db, filter \\ []), do: GenServer.call(db, {:all, filter})
+  def all(db, filter \\ []) do
+    case send_command(db, {:all, filter}) do
+      {:error, _} -> []
+      result -> result
+    end
+  end
 
   @doc """
   Gets one single record from schema's GenServer.
@@ -82,9 +87,11 @@ defmodule ExAthena.Database do
       {:error, :not_found}
 
   """
-  @spec get(module(), non_neg_integer()) :: {:ok, Ecto.Schema.t()} | {:error, :not_found}
+  @spec get(module(), non_neg_integer()) ::
+          {:ok, Ecto.Schema.t()} | {:error, :not_found | :server_down}
   def get(db, id) do
-    case GenServer.call(db, {:get, id}) do
+    case send_command(db, {:get, id}) do
+      error = {:error, _} -> error
       nil -> {:error, :not_found}
       item -> {:ok, item}
     end
@@ -102,11 +109,20 @@ defmodule ExAthena.Database do
       {:error, :not_found}
 
   """
-  @spec get_by(module(), keyword()) :: {:ok, Ecto.Schema.t()} | {:error, :not_found}
+  @spec get_by(module(), keyword()) ::
+          {:ok, Ecto.Schema.t()} | {:error, :not_found | :server_down}
   def get_by(db, filters) do
-    case GenServer.call(db, {:get_by, filters}) do
+    case send_command(db, {:get_by, filters}) do
+      error = {:error, _} -> error
       nil -> {:error, :not_found}
       item -> {:ok, item}
+    end
+  end
+
+  defp send_command(db, command) do
+    case GenServer.whereis(db) do
+      nil -> {:error, :server_down}
+      _ -> GenServer.call(db, command)
     end
   end
 end

@@ -82,10 +82,10 @@ jobs:
       run: mix credo -a
 
     - name: Analyse security
-      run: mix sobelow
+      run: cd src/exathena && mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls.json --umbrella
+      run: mix coveralls --umbrella
       env:
         MIX_ENV: test
 
@@ -186,10 +186,10 @@ jobs:
       run: mix credo -a
 
     - name: Analyse security
-      run: mix sobelow
+      run: cd src/exathena && mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls.json --umbrella
+      run: mix coveralls --umbrella
       env:
         MIX_ENV: test
 
@@ -297,9 +297,9 @@ jobs:
       run: mix credo -a
 
     - name: Analyse security
-      run: mix sobelow
+      run: cd src/exathena && mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls.json --umbrella
+      run: mix coveralls --umbrella
       env:
         MIX_ENV: test

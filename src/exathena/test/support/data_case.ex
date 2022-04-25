@@ -13,8 +13,9 @@ defmodule ExAthena.DataCase do
   by setting `use ExAthena.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
-
   use ExUnit.CaseTemplate
+
+  import ExUnit.Assertions
 
   using do
     quote do
