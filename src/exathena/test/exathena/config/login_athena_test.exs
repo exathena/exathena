@@ -10,7 +10,12 @@ defmodule ExAthena.Config.LoginAthenaTest do
     end
 
     test "returns an invalid changeset" do
-      refute_changeset LoginAthena.changeset(%LoginAthena{}, %{})
+      attrs =
+        for {k, _} <- params_for(:login_athena),
+            into: %{},
+            do: {k, nil}
+
+      refute_changeset LoginAthena.changeset(%LoginAthena{}, attrs)
     end
   end
 end
