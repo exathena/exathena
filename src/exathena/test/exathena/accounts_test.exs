@@ -211,4 +211,46 @@ defmodule ExAthena.AccountsTest do
       assert {:error, :internal_server_error} == Accounts.check_user_role(user)
     end
   end
+
+  describe "check_user_expiration_date/1" do
+    test "returns success when server isn't configured with user's expiration date" do
+      start_supervised!(Config)
+
+      user = insert(:user)
+      assert :ok == Accounts.check_user_expiration_date(user)
+    end
+
+    test "returns success when current datetime is between subscription until datetime" do
+      start_supervised!(Config)
+
+      user = insert(:user)
+      until = insert(:subscription, user: user).until
+      travel_to(Timex.shift(until, days: -1))
+
+      :sys.replace_state(LoginAthenaConfig, fn state ->
+        %{state | data: %{state.data | start_limited_time: 1}}
+      end)
+
+      assert :ok == Accounts.check_user_expiration_date(user)
+    end
+
+    test "returns access expired if current datetime is greater than subscription until datetime" do
+      start_supervised!(Config)
+
+      user = insert(:user)
+      until = insert(:subscription, user: user).until
+      travel_to(Timex.shift(until, seconds: 1))
+
+      :sys.replace_state(LoginAthenaConfig, fn state ->
+        %{state | data: %{state.data | start_limited_time: 1}}
+      end)
+
+      assert {:error, :access_expired} == Accounts.check_user_expiration_date(user)
+    end
+
+    test "returns error with login_athena isn't available yet" do
+      user = insert(:user)
+      assert {:error, :internal_server_error} == Accounts.check_user_expiration_date(user)
+    end
+  end
 end

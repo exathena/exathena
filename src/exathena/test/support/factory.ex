@@ -39,4 +39,15 @@ defmodule ExAthena.Factory do
       banned_until: banned_until
     }
   end
+
+  def subscription_factory do
+    until =
+      Timex.now()
+      |> Timex.shift(days: 30)
+
+    %ExAthena.Accounts.Subscription{
+      user: build(:user),
+      until: until
+    }
+  end
 end

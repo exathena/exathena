@@ -4,7 +4,7 @@ defmodule ExAthena.Accounts do
   """
   use ExAthena, :context
 
-  alias ExAthena.Accounts.{Ban, User}
+  alias ExAthena.Accounts.{Ban, Subscription, User}
   alias ExAthena.Config
   alias ExAthena.Config.LoginAthena
   alias ExAthena.Database
@@ -160,13 +160,13 @@ defmodule ExAthena.Accounts do
       {:error, :user_banned, ~U[2022-04-07 16:37:44.783000Z]}
 
   """
-  # TODO: Check user account expiration date
   # TODO: Check user state (wtf is this?)
   # TODO: Check user denylist
   # TODO: Check if char-server is up to return list of online servers
   @spec authorize_user(User.t()) :: :ok | {:error, :user_banned, DateTime.t()}
   def authorize_user(user = %User{}) do
-    with :ok <- check_user_ban(user) do
+    with :ok <- check_user_ban(user),
+         :ok <- check_user_expiration_date(user) do
       check_user_role(user)
     end
   end
@@ -256,6 +256,47 @@ defmodule ExAthena.Accounts do
 
       {:error, _} ->
         {:error, :internal_server_error}
+    end
+  end
+
+  @doc """
+  Checks if the user is allowed to connect when
+  server has the option `start_limited_time` activated.
+
+  ## Examples
+
+      iex> check_user_expiration_date(%User{})
+      :ok
+
+      iex> check_user_expiration_date(%User{})
+      {:error, :access_expired}
+
+  """
+  @spec check_user_expiration_date(User.t()) :: :ok | {:error, :access_expired}
+  def check_user_expiration_date(user = %User{}) do
+    case Config.login_athena() do
+      {:ok, %LoginAthena{start_limited_time: -1}} ->
+        :ok
+
+      {:ok, %LoginAthena{start_limited_time: _}} ->
+        do_check_user_expiration_date(user)
+
+      {:error, _} ->
+        {:error, :internal_server_error}
+    end
+  end
+
+  defp do_check_user_expiration_date(user = %User{}) do
+    now = ExAthena.now()
+
+    query =
+      Subscription
+      |> where([s], s.user_id == ^user.id)
+      |> where([s], ^now <= s.until)
+
+    case Repo.one(query) do
+      nil -> {:error, :access_expired}
+      %Subscription{} -> :ok
     end
   end
 end
