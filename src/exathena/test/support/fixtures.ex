@@ -18,7 +18,7 @@ defmodule UpdatedConfig do
   schema "updated_config.conf" do
     field :date_format, :string, default: "%Y-%m-%d %H:%M:%S"
     field :min_group_id_to_connect, :integer, default: -1
-    field :vip_group, :integer, integer: 5
+    field :vip_group, :integer, default: 5
     field :ipban_dynamic_pass_failure_ban, :boolean, default: true
     field :usercount_medium, :integer, default: 500
     field :use_dnsbl, :boolean, default: true

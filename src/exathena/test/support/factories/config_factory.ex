@@ -6,6 +6,7 @@ defmodule ExAthena.ConfigFactory do
     quote do
       def login_athena_factory do
         %ExAthena.Config.LoginAthena{
+          bind_ip: "127.0.0.1",
           stdout_with_ansisequence: true,
           ipban_enable: true,
           usercount_low: 200,
@@ -40,6 +41,14 @@ defmodule ExAthena.ConfigFactory do
           ipban_dynamic_pass_failure_ban_interval: 5,
           ipban_cleanup_interval: 60,
           ipban_dynamic_pass_failure_ban_duration: 5
+        }
+      end
+
+      def subnet_athena_factory do
+        %ExAthena.Config.SubnetAthena{
+          net_submark: "255.0.0.0",
+          char_ip: "127.0.0.1",
+          map_ip: "127.0.0.1"
         }
       end
     end
