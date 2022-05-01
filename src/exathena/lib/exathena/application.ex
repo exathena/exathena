@@ -22,7 +22,8 @@ defmodule ExAthena.Application do
         oban(env) ++
         logger_repo(env) ++
         start_configs(env) ++
-        start_databases(env)
+        start_databases(env) ++
+        start_servers(env)
 
     :ok = start_handlers(env)
 
@@ -63,6 +64,12 @@ defmodule ExAthena.Application do
 
   defp start_databases(_) do
     [ExAthena.Database]
+  end
+
+  defp start_servers(:test), do: []
+
+  defp start_servers(_) do
+    [ExAthenaMmo.Server]
   end
 
   @impl true
