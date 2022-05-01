@@ -3,8 +3,8 @@ defmodule ExAthena.SocketCase do
 
   use ExUnit.CaseTemplate
 
-  @port 5489
-  @options [:binary, active: false]
+  @port 6900
+  @options [:binary, active: false, reuseaddr: true, keepalive: true]
 
   using do
     quote do
@@ -24,14 +24,15 @@ defmodule ExAthena.SocketCase do
   end
 
   setup tags do
-    {:ok, server} = :gen_tcp.listen(@port, @options)
-    {:ok, socket} = :gen_tcp.connect('localhost', @port, @options)
+    start_supervised!(ExAthena.Config)
+    start_supervised!(ExAthenaMmo.Server)
+
+    {:ok, socket} = :gen_tcp.connect('127.0.0.1', @port, @options)
 
     pid = Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthena.Repo, shared: not tags[:async])
 
     on_exit(fn ->
       Ecto.Adapters.SQL.Sandbox.stop_owner(pid)
-      :ok = :gen_tcp.close(server)
       :ok = :gen_tcp.close(socket)
     end)
 

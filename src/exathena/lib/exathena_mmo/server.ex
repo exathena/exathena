@@ -16,7 +16,7 @@ defmodule ExAthenaMmo.Server do
   def init(options) do
     children =
       Enum.map(options, fn {id, opts} ->
-        options = @default_options ++ opts
+        options = @default_options ++ opts ++ [id: id]
         Supervisor.child_spec({ExAthenaMmo.Server.Socket, options}, id: id)
       end)
 
@@ -42,7 +42,7 @@ defmodule ExAthenaMmo.Server do
   defp to_ip_address!(ip) when is_binary(ip) do
     case to_ip_address(ip) do
       {:ok, ip} -> ip
-      error ->  raise ArgumentError, message: inspect(error)
+      error -> raise ArgumentError, message: inspect(error)
     end
   end
 
