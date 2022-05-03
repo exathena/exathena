@@ -271,8 +271,13 @@ defmodule ExAthena.Accounts do
       iex> check_user_expiration_date(%User{})
       {:error, :access_expired}
 
+      # When LoginAthenaConfig didn't start yet
+      iex> check_user_expiration_date(%User{})
+      {:error, :internal_server_error}
+
   """
-  @spec check_user_expiration_date(User.t()) :: :ok | {:error, :access_expired}
+  @spec check_user_expiration_date(User.t()) ::
+          :ok | {:error, :access_expired | :internal_server_error}
   def check_user_expiration_date(user = %User{}) do
     case Config.login_athena() do
       {:ok, %LoginAthena{start_limited_time: -1}} ->
