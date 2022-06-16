@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.4
--- Dumped by pg_dump version 12.4
+-- Dumped from database version 14.4
+-- Dumped by pg_dump version 14.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -27,7 +27,7 @@ SET default_table_access_method = heap;
 CREATE TABLE public.authentication_logs (
     id bigint NOT NULL,
     user_id integer,
-    socket_fd integer NOT NULL,
+    join_ref integer NOT NULL,
     ip bytea NOT NULL,
     encrypted_ip bytea NOT NULL,
     message text NOT NULL,
@@ -96,10 +96,10 @@ CREATE INDEX authentication_logs_encrypted_ip_index ON public.authentication_log
 
 
 --
--- Name: authentication_logs_socket_fd_index; Type: INDEX; Schema: public; Owner: -
+-- Name: authentication_logs_join_ref_index; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX authentication_logs_socket_fd_index ON public.authentication_logs USING btree (socket_fd);
+CREATE INDEX authentication_logs_join_ref_index ON public.authentication_logs USING btree (join_ref);
 
 
 --
@@ -114,3 +114,4 @@ CREATE INDEX authentication_logs_user_id_index ON public.authentication_logs USI
 --
 
 INSERT INTO public."schema_migrations" (version) VALUES (20220409185121);
+INSERT INTO public."schema_migrations" (version) VALUES (20220616230319);
