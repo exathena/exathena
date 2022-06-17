@@ -38,7 +38,7 @@ defmodule ExAthenaLogger.ConsoleTest do
 
     test "logs the rejected authentication due to user is banned", %{
       event: event,
-      socket: socket = %{id: id, join_ref: join_ref}
+      socket: socket = %{id: id}
     } do
       user = Factory.insert(:user)
       banned_until = Factory.insert(:ban, user: user).banned_until

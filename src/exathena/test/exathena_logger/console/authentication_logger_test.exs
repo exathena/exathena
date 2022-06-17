@@ -33,9 +33,7 @@ defmodule ExAthenaLogger.Console.AuthenticationLoggerTest do
                "Connection refused from ip 200.120.10.67 due to invalid credentials"
     end
 
-    test "returns log message for user already banned", %{
-      socket: socket = %{id: id, join_ref: join_ref}
-    } do
+    test "returns log message for user already banned", %{socket: socket = %{id: id}} do
       user = Factory.insert(:user)
       ban = Factory.insert(:ban, user: user)
       meta = %{socket: socket, user: user, banned_until: ban.banned_until, result: :user_banned}
