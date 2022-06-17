@@ -20,33 +20,31 @@ defmodule ExAthenaLogger.Sql do
     insert_authentication_log(event_meta, message, metadata)
   end
 
-  defp insert_authentication_log(%{user: user, socket: socket}, message, metadata) do
-    {:ok, ip} = ExAthenaMmo.get_socket_address(socket)
-    {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
-
-    attrs = %{
+  defp insert_authentication_log(
+         %{user: user, socket: %Phoenix.Socket{assigns: %{ip: ip}, join_ref: join_ref}},
+         message,
+         metadata
+       ) do
+    insert_to_sql(AuthenticationLog, %{
       user_id: user.id,
-      socket_fd: socket_fd,
+      join_ref: join_ref,
       ip: ip,
       message: message,
       metadata: metadata
-    }
-
-    insert_to_sql(AuthenticationLog, attrs)
+    })
   end
 
-  defp insert_authentication_log(%{socket: socket}, message, metadata) do
-    {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
-    {:ok, ip} = ExAthenaMmo.get_socket_address(socket)
-
-    attrs = %{
-      socket_fd: socket_fd,
+  defp insert_authentication_log(
+         %{socket: %Phoenix.Socket{assigns: %{ip: ip}, join_ref: join_ref}},
+         message,
+         metadata
+       ) do
+    insert_to_sql(AuthenticationLog, %{
+      join_ref: join_ref,
       ip: ip,
       message: message,
       metadata: metadata
-    }
-
-    insert_to_sql(AuthenticationLog, attrs)
+    })
   end
 
   defp insert_to_sql(schema, attrs) do

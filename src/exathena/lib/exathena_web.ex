@@ -54,7 +54,15 @@ defmodule ExAthenaWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import ExAthenaWeb.Gettext
+
+      # Include shared imports and aliases for views
+      unquote(view_helpers())
+    end
+  end
+
+  def socket do
+    quote do
+      use Phoenix.Socket
     end
   end
 

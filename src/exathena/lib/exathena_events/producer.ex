@@ -13,12 +13,12 @@ defmodule ExAthenaEvents.Producer do
   @authentication_log_event [:exathena, :authentication, :log]
 
   @impl true
-  def user_authentication_requested(socket) when is_port(socket) do
+  def user_authentication_requested(socket = %Phoenix.Socket{}) do
     :telemetry.execute(@authentication_log_event, %{}, %{socket: socket, type: :request})
   end
 
   @impl true
-  def user_authentication_accepted(socket, user = %User{}) when is_port(socket) do
+  def user_authentication_accepted(socket = %Phoenix.Socket{}, user = %User{}) do
     :telemetry.execute(@authentication_log_event, %{}, %{
       socket: socket,
       user: user,
@@ -27,7 +27,7 @@ defmodule ExAthenaEvents.Producer do
   end
 
   @impl true
-  def user_authentication_rejected(socket, result) when is_port(socket) and is_atom(result) do
+  def user_authentication_rejected(socket = %Phoenix.Socket{}, result) when is_atom(result) do
     :telemetry.execute(@authentication_log_event, %{}, %{socket: socket, result: result})
   end
 end

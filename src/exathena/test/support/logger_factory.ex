@@ -9,7 +9,7 @@ defmodule ExAthenaLogger.Factory do
 
     %ExAthenaLogger.Sql.AuthenticationLog{
       user: MainFactory.build(:user),
-      socket_fd: 30,
+      join_ref: 30,
       message: Faker.Lorem.Shakespeare.romeo_and_juliet(),
       metadata: %{},
       encrypted_ip: ip,

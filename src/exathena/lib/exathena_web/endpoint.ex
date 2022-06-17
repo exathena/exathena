@@ -12,6 +12,18 @@ defmodule ExAthenaWeb.Endpoint do
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
+  socket "/public", ExAthenaWeb.PublicSocket,
+    longpoll: false,
+    websocket: [
+      connect_info: [
+        :peer_data,
+        :trace_context_headers,
+        :x_headers,
+        :uri,
+        session: @session_options
+      ]
+    ]
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest
