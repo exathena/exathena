@@ -96,24 +96,31 @@ jobs:
         elixir:
           - 1.12.3
           - 1.13.4
+        otp:
+          - 24.0.6
+          - 24.1.7
+          - 24.2.2
+          - 24.3.4.2
 
-    name: tests on macOS with elixir:${{ matrix.elixir }} and latest otp
+    name: tests on macOS with elixir:${{ matrix.elixir }} and otp:${{ matrix.otp }}
     runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up Erlang
-      run: |
-        brew update
-        brew install erlang
-
     - name: Set up ASDF
       run: |
         brew update
         brew install asdf
+        asdf plugin-add erlang
         asdf plugin-add elixir
         echo "$HOME/.asdf/shims" >> $GITHUB_PATH
+
+    - name: Set up Erlang
+      run: |
+        asdf install erlang ${{ matrix.otp }}
+        asdf global erlang ${{ matrix.otp }}
+        asdf reshim
 
     - name: Set up Elixir
       run: |
@@ -154,9 +161,9 @@ jobs:
           _build
           tmp
           tmp/plts
-        key: ${{ runner.os }}_latest-otp_${{ matrix.elixir }}-mix_${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}_latest-otp_${{ matrix.elixir }}-mix_
+          ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_
 
     - name: Install dependencies
       run: mix deps.get
@@ -220,26 +227,6 @@ jobs:
       with:
         elixir-version: ${{ matrix.elixir }}
         otp-version: ${{ matrix.otp }}
-
-    - name: Start epmd (only for 24.0.x)
-      if: ${{ matrix.otp == '24.0.x' }}
-      run: cmd /c "START /b epmd"
-      working-directory: ${{ env.INSTALL_DIR_FOR_OTP }}/erts-12.0.4/bin
-
-    - name: Start epmd (only for 24.1.x)
-      if: ${{ matrix.otp == '24.1.x' }}
-      run: cmd /c "START /b epmd"
-      working-directory: ${{ env.INSTALL_DIR_FOR_OTP }}/erts-12.1.5/bin
-
-    - name: Start epmd (only for 24.2.x)
-      if: ${{ matrix.otp == '24.2.x' }}
-      run: cmd /c "START /b epmd"
-      working-directory: ${{ env.INSTALL_DIR_FOR_OTP }}/erts-12.2.1/bin
-
-    - name: Start epmd (only for 24.3.x)
-      if: ${{ matrix.otp == '24.3.x' }}
-      run: cmd /c "START /b epmd"
-      working-directory: ${{ env.INSTALL_DIR_FOR_OTP }}/erts-12.3.1/bin
 
     # Add tar that supports symlinks, see https://github.com/actions/virtual-environments/issues/4679
     - name: Add tar.exe

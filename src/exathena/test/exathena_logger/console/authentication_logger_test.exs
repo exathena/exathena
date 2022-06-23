@@ -6,85 +6,80 @@ defmodule ExAthenaLogger.Console.AuthenticationLoggerTest do
 
   alias ExAthenaLogger.Console.AuthenticationLogger
 
+  setup do
+    {:ok, socket: join_public_channel(ExAthenaWeb.LoginChannel, "login")}
+  end
+
   describe "get_log_message/1" do
     test "returns log message for request authentication", %{socket: socket} do
       meta = %{socket: socket, type: :request}
 
-      assert "Received request authentication from ip 127.0.0.1" ==
-               AuthenticationLogger.get_log_message(meta)
+      assert AuthenticationLogger.get_log_message(meta) ==
+               "Received request authentication from ip 200.120.10.67"
     end
 
     test "returns log message for accepted connection", %{socket: socket} do
       user = Factory.insert(:user)
       meta = %{socket: socket, user: user, result: :accepted}
 
-      assert "Connection accepted from ip 127.0.0.1 associated to user #{user.id}" ==
-               AuthenticationLogger.get_log_message(meta)
+      assert AuthenticationLogger.get_log_message(meta) ==
+               "Connection accepted from ip 200.120.10.67 associated to user #{user.id}"
     end
 
     test "returns log message for invalid credentials", %{socket: socket} do
       meta = %{socket: socket, result: :invalid_credentials}
 
-      assert "Connection refused from ip 127.0.0.1 due to invalid credentials" ==
-               AuthenticationLogger.get_log_message(meta)
+      assert AuthenticationLogger.get_log_message(meta) ==
+               "Connection refused from ip 200.120.10.67 due to invalid credentials"
     end
 
-    test "returns log message for user already banned", %{socket: socket} do
+    test "returns log message for user already banned", %{socket: socket = %{id: id}} do
       user = Factory.insert(:user)
       ban = Factory.insert(:ban, user: user)
       meta = %{socket: socket, user: user, banned_until: ban.banned_until, result: :user_banned}
 
-      assert {:ok, ip} = ExAthenaMmo.get_socket_address(socket)
-      assert {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
-
-      assert "Connection refused from user #{user.id} ip #{ip} with fd #{socket_fd} due to user being banned until #{ban.banned_until}" ==
-               AuthenticationLogger.get_log_message(meta)
+      assert AuthenticationLogger.get_log_message(meta) ==
+               "Connection refused from user #{user.id} ip 200.120.10.67 with id #{id} due to user being banned until #{ban.banned_until}"
     end
   end
 
   describe "build_metadata/2" do
-    test "returns log metadata for request authentication", %{socket: socket} do
+    test "returns log metadata for request authentication", %{
+      socket: socket = %{join_ref: join_ref}
+    } do
       meta = %{socket: socket, type: :request}
 
-      assert {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
-
-      assert %{duration_ms: @duration_ms, socket_fd: ^socket_fd} =
+      assert %{duration_ms: @duration_ms, join_ref: ^join_ref} =
                AuthenticationLogger.build_metadata(@measurements, meta)
     end
 
-    test "returns log metadata for accepted connection", %{socket: socket} do
+    test "returns log metadata for accepted connection", %{socket: socket = %{join_ref: join_ref}} do
       user = Factory.insert(:user)
       meta = %{socket: socket, user: user, result: :accepted}
       user_id = user.id
 
-      assert {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
-
-      assert %{duration_ms: @duration_ms, socket_fd: ^socket_fd, user_id: ^user_id} =
+      assert %{duration_ms: @duration_ms, join_ref: ^join_ref, user_id: ^user_id} =
                AuthenticationLogger.build_metadata(@measurements, meta)
     end
 
-    test "returns log metadata for invalid credentials", %{socket: socket} do
+    test "returns log metadata for invalid credentials", %{socket: socket = %{join_ref: join_ref}} do
       meta = %{socket: socket, result: :invalid_credentials}
 
-      assert {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
-
-      assert %{duration_ms: @duration_ms, socket_fd: ^socket_fd} =
+      assert %{duration_ms: @duration_ms, join_ref: ^join_ref} =
                AuthenticationLogger.build_metadata(@measurements, meta)
     end
 
-    test "returns log metadata for user already banned", %{socket: socket} do
+    test "returns log metadata for user already banned", %{socket: socket = %{join_ref: join_ref}} do
       user = Factory.insert(:user)
       banned_until = Factory.insert(:ban, user: user).banned_until
       user_id = user.id
 
       meta = %{socket: socket, user: user, banned_until: banned_until, result: :user_banned}
 
-      assert {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
-
       assert %{
                duration_ms: @duration_ms,
                banned_until: ^banned_until,
-               socket_fd: ^socket_fd,
+               join_ref: ^join_ref,
                user_id: ^user_id
              } = AuthenticationLogger.build_metadata(@measurements, meta)
     end

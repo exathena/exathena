@@ -4,15 +4,20 @@ defmodule ExAthenaLogger.SqlTest do
   alias ExAthenaLogger.Sql
   alias ExAthenaLogger.Sql.AuthenticationLog
 
+  setup do
+    {:ok, socket: join_public_channel(ExAthenaWeb.LoginChannel, "login")}
+  end
+
   describe "[:exathena, :authentication, :log]" do
     @describetag event: ~w(exathena authentication log)a
 
-    test "inserts the requested authentication log", %{event: event, socket: socket} do
+    test "inserts the requested authentication log", %{
+      event: event,
+      socket: socket = %{join_ref: join_ref}
+    } do
       meta = %{socket: socket, type: :request}
 
-      assert {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
-
-      assert {:ok, %AuthenticationLog{socket_fd: ^socket_fd}} =
+      assert {:ok, %AuthenticationLog{join_ref: ^join_ref}} =
                Sql.handle_event(event, %{}, meta, [])
     end
 
@@ -25,12 +30,13 @@ defmodule ExAthenaLogger.SqlTest do
       assert {:ok, %AuthenticationLog{user_id: ^user_id}} = Sql.handle_event(event, %{}, meta, [])
     end
 
-    test "inserts the rejected authentication log", %{event: event, socket: socket} do
+    test "inserts the rejected authentication log", %{
+      event: event,
+      socket: socket = %{join_ref: join_ref}
+    } do
       meta = %{socket: socket, result: :invalid_credentials}
 
-      assert {:ok, socket_fd} = ExAthenaMmo.get_socket_fd(socket)
-
-      assert {:ok, %AuthenticationLog{socket_fd: ^socket_fd}} =
+      assert {:ok, %AuthenticationLog{join_ref: ^join_ref}} =
                Sql.handle_event(event, %{}, meta, [])
     end
 

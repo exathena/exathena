@@ -11,7 +11,7 @@ defmodule ExAthenaLogger.Sql.AuthenticationLog do
           id: pos_integer(),
           user: required_assoc(User.t()),
           user_id: pos_integer(),
-          socket_fd: non_neg_integer(),
+          join_ref: non_neg_integer(),
           ip: binary(),
           encrypted_ip: binary(),
           message: String.t(),
@@ -19,11 +19,11 @@ defmodule ExAthenaLogger.Sql.AuthenticationLog do
           inserted_at: NaiveDateTime.t()
         }
 
-  @fields ~w(user_id socket_fd ip message metadata)a
+  @fields ~w(user_id join_ref ip message metadata)a
   @required_fields @fields -- ~w(user_id)a
 
   schema "authentication_logs" do
-    field :socket_fd, :integer
+    field :join_ref, :integer
     field :ip, Binary
     field :message, :string
     field :metadata, :map

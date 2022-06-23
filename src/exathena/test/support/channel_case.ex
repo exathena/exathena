@@ -20,8 +20,12 @@ defmodule ExAthenaWeb.ChannelCase do
   using do
     quote do
       # Import conveniences for testing with channels
-      import ExAthenaWeb.ChannelCase
+      import Assertions
       import ExAthena.Factory
+      import ExAthena.TimeHelper
+      import ExAthena.Factory
+      import ExAthenaWeb.SocketHelper
+      import Mox
       import Phoenix.ChannelTest
 
       # The default endpoint for testing
@@ -30,8 +34,16 @@ defmodule ExAthenaWeb.ChannelCase do
   end
 
   setup tags do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthena.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    pid_main = Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthena.Repo, shared: not tags[:async])
+
+    pid_logger =
+      Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthenaLogger.Repo, shared: not tags[:async])
+
+    on_exit(fn ->
+      Ecto.Adapters.SQL.Sandbox.stop_owner(pid_main)
+      Ecto.Adapters.SQL.Sandbox.stop_owner(pid_logger)
+    end)
+
     :ok
   end
 end

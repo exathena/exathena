@@ -9,7 +9,7 @@ defmodule ExAthenaEvents.Behaviour do
   alias ExAthena.Accounts.User
 
   # The socket type
-  @typep socket :: port()
+  @typep socket :: Phoenix.Socket.t()
 
   @doc """
   After an User request authentication, this

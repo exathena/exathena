@@ -7,7 +7,7 @@ defmodule ExAthena.TimeHelper do
 
   @doc false
   @spec travel_to(Date.t() | DateTime.t()) :: atom()
-  def travel_to(date_or_datetime) do
-    Mox.expect(ExAthena.ClockMock, :now, fn _ -> date_or_datetime end)
+  def travel_to(date_or_datetime, times \\ 1) do
+    Mox.expect(ExAthena.ClockMock, :now, times, fn _ -> date_or_datetime end)
   end
 end

@@ -18,12 +18,12 @@ defmodule ExAthenaEvents do
 
   ## Examples
 
-      iex> user_authentication_requested(#PID<0.110.0>)
+      iex> user_authentication_requested(%Phoenix.Socket{})
       :ok
 
   """
-  @spec user_authentication_requested(port()) :: :ok
-  def user_authentication_requested(socket) when is_port(socket) do
+  @spec user_authentication_requested(Phoenix.Socket.t()) :: :ok
+  def user_authentication_requested(socket = %Phoenix.Socket{}) do
     @client.user_authentication_requested(socket)
   end
 
@@ -34,12 +34,12 @@ defmodule ExAthenaEvents do
 
   ## Examples
 
-      iex> user_authentication_accepted(#PID<0.110.0>, %User{})
+      iex> user_authentication_accepted(%Phoenix.Socket{}, %User{})
       :ok
 
   """
-  @spec user_authentication_accepted(port(), User.t()) :: :ok
-  def user_authentication_accepted(socket, user = %User{}) when is_port(socket) do
+  @spec user_authentication_accepted(Phoenix.Socket.t(), User.t()) :: :ok
+  def user_authentication_accepted(socket = %Phoenix.Socket{}, user = %User{}) do
     @client.user_authentication_accepted(socket, user)
   end
 
@@ -49,12 +49,12 @@ defmodule ExAthenaEvents do
 
   ## Examples
 
-      iex> user_authentication_rejected(#PID<0.110.0>, :invalid_credentials)
+      iex> user_authentication_rejected(%Phoenix.Socket{}, :invalid_credentials)
       :ok
 
   """
-  @spec user_authentication_rejected(port(), atom()) :: :ok
-  def user_authentication_rejected(socket, result) when is_port(socket) and is_atom(result) do
+  @spec user_authentication_rejected(Phoenix.Socket.t(), atom()) :: :ok
+  def user_authentication_rejected(socket = %Phoenix.Socket{}, result) when is_atom(result) do
     @client.user_authentication_rejected(socket, result)
   end
 end
