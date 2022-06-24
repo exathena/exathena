@@ -17,6 +17,10 @@ defmodule ExAthenaWeb.Channel.LoginView do
     %{errors: %{detail: "Your access expired"}}
   end
 
+  def render("user_denied.json", _assigns) do
+    %{errors: %{detail: "User's IP is denylisted"}}
+  end
+
   def render("user_banned.json", %{banned_until: banned_until}) do
     %{errors: %{detail: "Your account is banned until #{banned_until}"}}
   end
