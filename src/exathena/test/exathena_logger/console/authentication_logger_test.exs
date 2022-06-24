@@ -41,6 +41,20 @@ defmodule ExAthenaLogger.Console.AuthenticationLoggerTest do
       assert AuthenticationLogger.get_log_message(meta) ==
                "Connection refused from user #{user.id} ip 200.120.10.67 with id #{id} due to user being banned until #{ban.banned_until}"
     end
+
+    test "returns log message for not found username", %{socket: socket} do
+      meta = %{socket: socket, result: :not_found}
+
+      assert AuthenticationLogger.get_log_message(meta) ==
+               "Connection refused from ip 200.120.10.67 due to not found the given username"
+    end
+
+    test "returns log message for user with access expired", %{socket: socket} do
+      meta = %{socket: socket, result: :access_expired}
+
+      assert AuthenticationLogger.get_log_message(meta) ==
+               "Connection refused from ip 200.120.10.67 due to access expired"
+    end
   end
 
   describe "build_metadata/2" do
