@@ -13,6 +13,14 @@ defmodule ExAthenaLogger.Console.AuthenticationLogger do
     "Connection refused from ip #{ip} due to invalid credentials"
   end
 
+  def get_log_message(%{socket: %Phoenix.Socket{assigns: %{ip: ip}}, result: :not_found}) do
+    "Connection refused from ip #{ip} due to not found the given username"
+  end
+
+  def get_log_message(%{socket: %Phoenix.Socket{assigns: %{ip: ip}}, result: :access_expired}) do
+    "Connection refused from ip #{ip} due to access expired"
+  end
+
   def get_log_message(%{
         socket: %Phoenix.Socket{id: id, assigns: %{ip: ip}},
         user: user,
