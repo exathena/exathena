@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main ]
 
+env:
+  ELIXIR_VERSION: 1.13.4
+  OTP_VERSION: 24.3.4.2
+
 jobs:
   test:
     name: Run CI and publish code coverage
@@ -27,8 +31,8 @@ jobs:
     - name: Set up Elixir
       uses: erlef/setup-elixir@v1
       with:
-        elixir-version: 1.12.3
-        otp-version: 24.0.6
+        elixir-version: ${{ env.ELIXIR_VERSION }}
+        otp-version: ${{ env.OTP_VERSION }}
 
     - name: Restore dependencies cache
       uses: actions/cache@v2
@@ -38,9 +42,9 @@ jobs:
           _build
           tmp
           tmp/plts
-        key: ${{ runner.os }}_24.0.6_1.12.3-mix_${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-mix_${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          Linux_24.0.6_1.12.3-mix_
+          Linux-mix_
 
     - name: Install dependencies
       run: mix deps.get

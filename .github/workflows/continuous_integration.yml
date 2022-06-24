@@ -4,21 +4,13 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  ELIXIR_VERSION: 1.13.4
+  OTP_VERSION: 24.3.4.2
+
 jobs:
   linux:
-    strategy:
-      fail-fast: true
-      matrix:
-        elixir:
-          - 1.12.x
-          - 1.13.x
-        otp:
-          - 24.0.x
-          - 24.1.x
-          - 24.2.x
-          - 24.3.x
-
-    name: tests on Linux with elixir:${{ matrix.elixir }} and otp:${{ matrix.otp }}
+    name: Build & Test on Linux
     runs-on: ubuntu-latest
 
     services:
@@ -39,8 +31,8 @@ jobs:
     - name: Set up Elixir
       uses: erlef/setup-elixir@v1
       with:
-        elixir-version: ${{ matrix.elixir }}
-        otp-version: ${{ matrix.otp }}
+        elixir-version: ${{ env.ELIXIR_VERSION }}
+        otp-version: ${{ env.OTP_VERSION }}
 
     - name: Restore dependencies cache
       uses: actions/cache@v2
@@ -50,9 +42,9 @@ jobs:
           _build
           tmp
           tmp/plts
-        key: ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-mix_${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_
+          ${{ runner.os }}-mix_
 
     - name: Install dependencies
       run: mix deps.get
@@ -90,19 +82,7 @@ jobs:
         MIX_ENV: test
 
   macos:
-    strategy:
-      fail-fast: true
-      matrix:
-        elixir:
-          - 1.12.3
-          - 1.13.4
-        otp:
-          - 24.0.6
-          - 24.1.7
-          - 24.2.2
-          - 24.3.4.2
-
-    name: tests on macOS with elixir:${{ matrix.elixir }} and otp:${{ matrix.otp }}
+    name: Build & Test on macOS
     runs-on: macos-latest
 
     steps:
@@ -118,14 +98,14 @@ jobs:
 
     - name: Set up Erlang
       run: |
-        asdf install erlang ${{ matrix.otp }}
-        asdf global erlang ${{ matrix.otp }}
+        asdf install erlang ${{ env.OTP_VERSION }}
+        asdf global erlang ${{ env.OTP_VERSION }}
         asdf reshim
 
     - name: Set up Elixir
       run: |
-        asdf install elixir ${{ matrix.elixir }}
-        asdf global elixir ${{ matrix.elixir }}
+        asdf install elixir ${{ env.ELIXIR_VERSION }}
+        asdf global elixir ${{ env.ELIXIR_VERSION }}
         asdf reshim
         mix local.rebar --force
         mix local.hex --force
@@ -161,9 +141,9 @@ jobs:
           _build
           tmp
           tmp/plts
-        key: ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-mix_${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_
+          ${{ runner.os }}-mix_
 
     - name: Install dependencies
       run: mix deps.get
@@ -201,19 +181,7 @@ jobs:
         MIX_ENV: test
 
   windows:
-    strategy:
-      fail-fast: true
-      matrix:
-        elixir:
-          - 1.12.x
-          - 1.13.x
-        otp:
-          - 24.0.x
-          - 24.1.x
-          - 24.2.x
-          - 24.3.x
-
-    name: tests on Windows with elixir:${{ matrix.elixir }} and otp:${{ matrix.otp }}
+    name: Build & Test on Windows
     runs-on: windows-latest
 
     steps:
@@ -225,8 +193,8 @@ jobs:
     - name: Set up Elixir
       uses: erlef/setup-elixir@v1
       with:
-        elixir-version: ${{ matrix.elixir }}
-        otp-version: ${{ matrix.otp }}
+        elixir-version: ${{ env.ELIXIR_VERSION }}
+        otp-version: ${{ env.OTP_VERSION }}
 
     # Add tar that supports symlinks, see https://github.com/actions/virtual-environments/issues/4679
     - name: Add tar.exe
@@ -252,9 +220,9 @@ jobs:
           _build
           tmp
           tmp/plts
-        key: ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-mix_${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}_${{ matrix.otp }}_${{ matrix.elixir }}-mix_
+          ${{ runner.os }}-mix_
 
     - name: Install dependencies
       run: mix deps.get
