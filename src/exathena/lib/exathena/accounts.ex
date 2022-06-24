@@ -160,10 +160,8 @@ defmodule ExAthena.Accounts do
       {:error, :user_banned, ~U[2022-04-07 16:37:44.783000Z]}
 
   """
-  # TODO: Check user state (wtf is this?)
-  # TODO: Check user denylist
-  # TODO: Check if char-server is up to return list of online servers
-  @spec authorize_user(User.t()) :: :ok | {:error, :user_banned, DateTime.t()}
+  @spec authorize_user(User.t()) ::
+          :ok | {:error, :access_expired | :unauthorized} | {:error, :user_banned, DateTime.t()}
   def authorize_user(user = %User{}) do
     with :ok <- check_user_ban(user),
          :ok <- check_user_expiration_date(user) do
