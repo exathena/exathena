@@ -134,6 +134,29 @@ defmodule ExAthenaWeb.LoginChannelTest do
       assert_push "authentication_rejected", %{errors: %{detail: "Unauthorized"}}
     end
 
+    test "reject denied ip" do
+      start_supervised!(Config)
+      start_supervised!(Database)
+      freeze_time()
+
+      password = Faker.String.base64()
+      user = insert(:user, password: Pbkdf2.hash_pwd_salt(password))
+      denylist = ["200.120.10.67"]
+
+      :sys.replace_state(LoginAthenaConfig, fn state ->
+        %{state | data: %{state.data | use_dnsbl: true, dnsbl_servers: denylist}}
+      end)
+
+      socket = join_public_channel(LoginChannel, "login", socket_payload: %{pid: self()})
+
+      credentials = %{"username" => user.username, "password" => password}
+      push(socket, "authentication", credentials)
+
+      assert_receive {:authentication, ^credentials}
+
+      assert_push "authentication_rejected", %{errors: %{detail: "User's IP is denylisted"}}
+    end
+
     test "reject if server didn't start configs/databases" do
       freeze_time()
 
