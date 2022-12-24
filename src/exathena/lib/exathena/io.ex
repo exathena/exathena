@@ -37,6 +37,8 @@ defmodule ExAthena.IO do
       import ExAthena.IO
       require Logger
 
+      alias ExAthena.IO.Item
+
       @typep configuration :: %{} | %{optional(atom()) => keyword()}
 
       @configuration_type :conf

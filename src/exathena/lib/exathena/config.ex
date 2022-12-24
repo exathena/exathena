@@ -8,7 +8,6 @@ defmodule ExAthena.Config do
   use ExAthena.IO
 
   alias ExAthena.Config.{LoginAthena, SubnetAthena}
-  alias ExAthena.IO.Item
 
   @configs %{
     login_athena: [
@@ -57,12 +56,8 @@ defmodule ExAthena.Config do
       name = unquote(opts[:name])
 
       case GenServer.whereis(name) do
-        nil ->
-          {:error, :server_down}
-
-        _ ->
-          %Item{data: data} = :sys.get_state(name)
-          {:ok, data}
+        nil -> {:error, :server_down}
+        _ -> {:ok, Item.get_data(name)}
       end
     end
   end
