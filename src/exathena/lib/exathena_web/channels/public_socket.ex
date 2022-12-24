@@ -15,9 +15,8 @@ defmodule ExAthenaWeb.PublicSocket do
     end
   end
 
-  defp fetch_ip(_), do: nil
-
   @impl true
-  def id(%Phoenix.Socket{assigns: %{ip: ip}}) when ip not in [nil, ""], do: "public:#{ip}"
-  def id(_socket), do: "public:#{Ecto.UUID.generate()}"
+  def id(socket) when socket.assigns.ip not in [nil, ""] do
+    "public:#{socket.assigns.ip}"
+  end
 end
