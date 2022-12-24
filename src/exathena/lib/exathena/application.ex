@@ -41,10 +41,13 @@ defmodule ExAthena.Application do
 
   defp logger_repo(:test), do: [ExAthenaLogger.Repo]
 
+  @adapters Application.compile_env(:exathena, :logger_adapters, [])
+
   defp logger_repo(_) do
-    case Application.get_env(:exathena, :logger_adapter) do
-      Sql -> [ExAthenaLogger.Repo]
-      _ -> []
+    if Sql in @adapters do
+      [ExAthenaLogger.Repo]
+    else
+      []
     end
   end
 
