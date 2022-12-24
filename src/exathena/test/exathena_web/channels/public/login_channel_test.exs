@@ -1,5 +1,5 @@
 defmodule ExAthenaWeb.LoginChannelTest do
-  use ExAthenaWeb.ChannelCase
+  use ExAthenaWeb.ChannelCase, async: true
 
   alias ExAthena.{Config, Database}
   alias ExAthenaWeb.LoginChannel

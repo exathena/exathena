@@ -1,5 +1,5 @@
 defmodule ExAthenaLogger.ConsoleTest do
-  use ExAthenaLogger.DataCase
+  use ExAthenaLogger.DataCase, async: true
   @moduletag capture_log: true
 
   alias ExAthenaLogger.Console
