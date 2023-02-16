@@ -28,13 +28,25 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Restore elixir & erlang cache
+      id: erlef-cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          /home/runner/work/_temp/.setup-beam/elixir
+          /home/runner/.mix
+        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
+        restore-keys: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
+
     - name: Set up Elixir
       uses: erlef/setup-elixir@v1
+      if: steps.erlef-cache.outputs.cache-hit != 'true'
       with:
         elixir-version: ${{ env.ELIXIR_VERSION }}
         otp-version: ${{ env.OTP_VERSION }}
 
     - name: Restore dependencies cache
+      id: mix-cache
       uses: actions/cache@v2
       with:
         path: |
@@ -47,7 +59,10 @@ jobs:
           ${{ runner.os }}-mix_
 
     - name: Install dependencies
-      run: mix deps.get
+      if: steps.mix-cache.outputs.cache-hit != 'true'
+      run: |
+        mix deps.get
+        mix deps.compile
 
     - name: Check compilation (dev)
       run: mix compile --warnings-as-errors
@@ -88,7 +103,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Restore elixir & erlang cache
+      id: asdf-cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          /home/runner/.asdf
+          /home/runner/.mix
+        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
+        restore-keys: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
+
     - name: Set up ASDF
+      if: steps.asdf-cache.outputs.cache-hit != 'true'
       run: |
         brew update
         brew install asdf
@@ -97,16 +123,21 @@ jobs:
         echo "$HOME/.asdf/shims" >> $GITHUB_PATH
 
     - name: Set up Erlang
+      if: steps.asdf-cache.outputs.cache-hit != 'true'
       run: |
         asdf install erlang ${{ env.OTP_VERSION }}
         asdf global erlang ${{ env.OTP_VERSION }}
         asdf reshim
 
     - name: Set up Elixir
+      if: steps.asdf-cache.outputs.cache-hit != 'true'
       run: |
         asdf install elixir ${{ env.ELIXIR_VERSION }}
         asdf global elixir ${{ env.ELIXIR_VERSION }}
         asdf reshim
+
+    - name: Setup hex and rebar
+      run: |
         mix local.rebar --force
         mix local.hex --force
 
@@ -134,6 +165,7 @@ jobs:
         psql --command="ALTER USER postgres WITH SUPERUSER" --command="\du" postgres
 
     - name: Restore dependencies cache
+      id: mix-cache
       uses: actions/cache@v2
       with:
         path: |
@@ -146,7 +178,10 @@ jobs:
           ${{ runner.os }}-mix_
 
     - name: Install dependencies
-      run: mix deps.get
+      if: steps.mix-cache.outputs.cache-hit != 'true'
+      run: |
+        mix deps.get
+        mix deps.compile
 
     - name: Check compilation (dev)
       run: mix compile --warnings-as-errors
@@ -190,7 +225,18 @@ jobs:
 
     - uses: actions/checkout@v2
 
+    - name: Restore elixir & erlang cache
+      id: erlef-cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          D:\a\_temp\.setup-beam\elixir
+          C:\Users\runneradmin\.mix
+        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
+        restore-keys: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
+
     - name: Set up Elixir
+      if: steps.erlef-cache.outputs.cache-hit != 'true'
       uses: erlef/setup-elixir@v1
       with:
         elixir-version: ${{ env.ELIXIR_VERSION }}
@@ -213,6 +259,7 @@ jobs:
         & $env:PGBIN\psql --command="ALTER USER postgres WITH PASSWORD 'postgres'" --command="\du"
 
     - name: Restore dependencies cache
+      id: mix-cache
       uses: actions/cache@v2
       with:
         path: |
@@ -225,7 +272,10 @@ jobs:
           ${{ runner.os }}-mix_
 
     - name: Install dependencies
-      run: mix deps.get
+      if: steps.mix-cache.outputs.cache-hit != 'true'
+      run: |
+        mix deps.get
+        mix deps.compile
 
     - name: Check compilation (dev)
       run: mix compile --warnings-as-errors

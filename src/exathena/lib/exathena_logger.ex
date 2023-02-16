@@ -11,7 +11,7 @@ defmodule ExAthenaLogger do
   """
   @callback handle_event([atom(), ...], map(), map(), term()) :: any()
 
-  @adapter Application.compile_env(:exathena, :logger_adapter, ExAthenaLogger.Console)
+  @adapters Application.compile_env(:exathena, :logger_adapters, [])
 
   @events %{
     "exathena-logger-authentication-log" => [:exathena, :authentication, :log]
@@ -22,12 +22,16 @@ defmodule ExAthenaLogger do
   """
   @spec start_handlers(String.t()) :: :ok
   def start_handlers(prefix \\ "") do
-    Enum.reduce_while(@events, :ok, fn {event_name, event_id}, acc ->
-      case :telemetry.attach(prefix <> event_name, event_id, &handle_event/4, []) do
-        :ok -> {:cont, acc}
-        error = {:error, _} -> {:halt, error}
+    for {name, event} <- @events do
+      for mod <- @adapters do
+        suffix = mod |> Module.split() |> List.last() |> String.downcase()
+        event_name = "#{prefix}-#{name}-#{suffix}"
+
+        :telemetry.attach(event_name, event, &mod.handle_event/4, [])
       end
-    end)
+    end
+
+    :ok
   end
 
   @doc """
@@ -35,12 +39,15 @@ defmodule ExAthenaLogger do
   """
   @spec event_names(String.t()) :: list(String.t())
   def event_names(prefix \\ "") do
-    @events
-    |> Map.keys()
-    |> Enum.map(&(prefix <> &1))
-  end
+    for {name, _event} <- @events, reduce: [] do
+      acc ->
+        event_names =
+          for mod <- @adapters do
+            suffix = mod |> Module.split() |> List.last() |> String.downcase()
+            "#{prefix}-#{name}-#{suffix}"
+          end
 
-  defp handle_event(event, measurements, metadata, config) do
-    @adapter.handle_event(event, measurements, metadata, config)
+        List.flatten(acc, event_names)
+    end
   end
 end

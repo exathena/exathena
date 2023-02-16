@@ -1,5 +1,5 @@
 defmodule ExAthenaWeb.LoginChannelTest do
-  use ExAthenaWeb.ChannelCase
+  use ExAthenaWeb.ChannelCase, async: true
 
   alias ExAthena.{Config, Database}
   alias ExAthenaWeb.LoginChannel
@@ -11,8 +11,7 @@ defmodule ExAthenaWeb.LoginChannelTest do
   end
 
   test "connects to the channel" do
-    join_public_channel(LoginChannel, "login", socket_payload: %{pid: self()})
-    assert_receive :login_join
+    join_public_channel(LoginChannel, "login")
   end
 
   describe "authentication topic" do
@@ -23,12 +22,10 @@ defmodule ExAthenaWeb.LoginChannelTest do
 
       password = Faker.String.base64()
       user = insert(:user, password: Pbkdf2.hash_pwd_salt(password))
-      socket = join_public_channel(LoginChannel, "login", socket_payload: %{pid: self()})
+      socket = join_public_channel(LoginChannel, "login")
 
       credentials = %{"username" => user.username, "password" => password}
       push(socket, "authentication", credentials)
-
-      assert_receive {:authentication, ^credentials}
 
       assert_push "authentication_accepted", %{}
     end
@@ -40,12 +37,10 @@ defmodule ExAthenaWeb.LoginChannelTest do
       user = insert(:user, password: Pbkdf2.hash_pwd_salt(password))
       insert(:ban, user: user, banned_until: ~U[2022-07-17 23:39:14Z])
 
-      socket = join_public_channel(LoginChannel, "login", socket_payload: %{pid: self()})
+      socket = join_public_channel(LoginChannel, "login")
 
       credentials = %{"username" => user.username, "password" => password}
       push(socket, "authentication", credentials)
-
-      assert_receive {:authentication, ^credentials}
 
       assert_push "authentication_rejected", %{
         errors: %{detail: "Your account is banned until 2022-07-17 23:39:14Z"}
@@ -58,12 +53,10 @@ defmodule ExAthenaWeb.LoginChannelTest do
       password = Faker.String.base64()
       user = insert(:user)
 
-      socket = join_public_channel(LoginChannel, "login", socket_payload: %{pid: self()})
+      socket = join_public_channel(LoginChannel, "login")
 
       credentials = %{"username" => user.username, "password" => password}
       push(socket, "authentication", credentials)
-
-      assert_receive {:authentication, ^credentials}
 
       assert_push "authentication_rejected", %{errors: %{detail: "Invalid Credentials"}}
     end
@@ -80,12 +73,10 @@ defmodule ExAthenaWeb.LoginChannelTest do
         %{state | data: %{state.data | start_limited_time: 1}}
       end)
 
-      socket = join_public_channel(LoginChannel, "login", socket_payload: %{pid: self()})
+      socket = join_public_channel(LoginChannel, "login")
 
       credentials = %{"username" => user.username, "password" => password}
       push(socket, "authentication", credentials)
-
-      assert_receive {:authentication, ^credentials}
 
       assert_push "authentication_rejected", %{errors: %{detail: "Your access expired"}}
     end
@@ -102,12 +93,10 @@ defmodule ExAthenaWeb.LoginChannelTest do
         %{state | data: %{state.data | min_group_id_to_connect: 1}}
       end)
 
-      socket = join_public_channel(LoginChannel, "login", socket_payload: %{pid: self()})
+      socket = join_public_channel(LoginChannel, "login")
 
       credentials = %{"username" => user.username, "password" => password}
       push(socket, "authentication", credentials)
-
-      assert_receive {:authentication, ^credentials}
 
       assert_push "authentication_rejected", %{errors: %{detail: "Unauthorized"}}
     end
@@ -124,12 +113,10 @@ defmodule ExAthenaWeb.LoginChannelTest do
         %{state | data: %{state.data | group_id_to_connect: 1}}
       end)
 
-      socket = join_public_channel(LoginChannel, "login", socket_payload: %{pid: self()})
+      socket = join_public_channel(LoginChannel, "login")
 
       credentials = %{"username" => user.username, "password" => password}
       push(socket, "authentication", credentials)
-
-      assert_receive {:authentication, ^credentials}
 
       assert_push "authentication_rejected", %{errors: %{detail: "Unauthorized"}}
     end
@@ -147,12 +134,10 @@ defmodule ExAthenaWeb.LoginChannelTest do
         %{state | data: %{state.data | use_dnsbl: true, dnsbl_servers: denylist}}
       end)
 
-      socket = join_public_channel(LoginChannel, "login", socket_payload: %{pid: self()})
+      socket = join_public_channel(LoginChannel, "login")
 
       credentials = %{"username" => user.username, "password" => password}
       push(socket, "authentication", credentials)
-
-      assert_receive {:authentication, ^credentials}
 
       assert_push "authentication_rejected", %{errors: %{detail: "User's IP is denylisted"}}
     end
@@ -163,12 +148,10 @@ defmodule ExAthenaWeb.LoginChannelTest do
       password = Faker.String.base64()
       user = insert(:user, role: :admin, password: Pbkdf2.hash_pwd_salt(password))
 
-      socket = join_public_channel(LoginChannel, "login", socket_payload: %{pid: self()})
+      socket = join_public_channel(LoginChannel, "login")
 
       credentials = %{"username" => user.username, "password" => password}
       push(socket, "authentication", credentials)
-
-      assert_receive {:authentication, ^credentials}
 
       assert_push "authentication_rejected", %{errors: %{detail: "Internal Server Error"}}
     end

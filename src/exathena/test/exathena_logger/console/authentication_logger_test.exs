@@ -1,5 +1,5 @@
 defmodule ExAthenaLogger.Console.AuthenticationLoggerTest do
-  use ExAthenaLogger.DataCase
+  use ExAthenaLogger.DataCase, async: true
 
   @duration_ms 12_345
   @measurements %{duration_ms: @duration_ms}

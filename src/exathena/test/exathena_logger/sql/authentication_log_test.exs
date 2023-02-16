@@ -1,5 +1,5 @@
 defmodule ExAthenaLogger.Sql.AuthenticationLogTest do
-  use ExAthenaLogger.DataCase
+  use ExAthenaLogger.DataCase, async: true
 
   alias ExAthenaLogger.Sql.AuthenticationLog
 

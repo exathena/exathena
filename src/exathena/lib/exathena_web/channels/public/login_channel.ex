@@ -10,20 +10,12 @@ defmodule ExAthenaWeb.LoginChannel do
 
   @impl true
   def join("login", _params, socket) do
-    if pid = socket.assigns.params["pid"] do
-      send(pid, :login_join)
-    end
-
     {:ok, socket}
   end
 
   @impl true
   def handle_in("authentication", credentials, socket) do
     %{"username" => username, "password" => password} = credentials
-
-    if pid = socket.assigns.params["pid"] do
-      send(pid, {:authentication, credentials})
-    end
 
     ExAthenaEvents.user_authentication_requested(socket)
 

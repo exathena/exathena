@@ -63,13 +63,16 @@ defmodule ExAthena.Database do
       iex> all(PlayerGroupDb)
       [%AtCommand{}, ...]
 
-      iex> all(PlayerGroupDb, commando: "Foo")
+      iex> all(PlayerGroupDb, command: "Foo")
       [%AtCommand{command: "Foo"}, ...]
 
   """
   @spec all(module(), keyword()) :: list(Ecto.Schema.t())
-  def all(db, filter \\ []) do
-    case send_command(db, {:all, filter}) do
+  def all(db, filters \\ []) do
+    db
+    |> check_if_is_alive()
+    |> do_list_all(filters)
+    |> case do
       {:error, _} -> []
       result -> result
     end
@@ -90,7 +93,10 @@ defmodule ExAthena.Database do
   @spec get(module(), non_neg_integer()) ::
           {:ok, Ecto.Schema.t()} | {:error, :not_found | :server_down}
   def get(db, id) do
-    case send_command(db, {:get, id}) do
+    db
+    |> check_if_is_alive()
+    |> do_get(id)
+    |> case do
       error = {:error, _} -> error
       nil -> {:error, :not_found}
       item -> {:ok, item}
@@ -112,17 +118,31 @@ defmodule ExAthena.Database do
   @spec get_by(module(), keyword()) ::
           {:ok, Ecto.Schema.t()} | {:error, :not_found | :server_down}
   def get_by(db, filters) do
-    case send_command(db, {:get_by, filters}) do
+    db
+    |> check_if_is_alive()
+    |> do_get_by(filters)
+    |> case do
       error = {:error, _} -> error
       nil -> {:error, :not_found}
       item -> {:ok, item}
     end
   end
 
-  defp send_command(db, command) do
-    case GenServer.whereis(db) do
+  # Private
+
+  defp check_if_is_alive(name) do
+    case GenServer.whereis(name) do
       nil -> {:error, :server_down}
-      _ -> GenServer.call(db, command)
+      _ -> name
     end
   end
+
+  defp do_get(error = {:error, _}, _), do: error
+  defp do_get(db, id), do: Item.get(db, id)
+
+  defp do_get_by(error = {:error, _}, _), do: error
+  defp do_get_by(db, filters), do: Item.get_by(db, filters)
+
+  defp do_list_all(error = {:error, _}, _), do: error
+  defp do_list_all(db, filters), do: Item.list_all(db, filters)
 end

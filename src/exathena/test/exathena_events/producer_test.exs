@@ -1,5 +1,5 @@
 defmodule ExAthenaEvents.ProducerTest do
-  use ExAthenaWeb.ChannelCase
+  use ExAthenaWeb.ChannelCase, async: true
 
   alias ExAthenaEvents.Producer
   alias ExAthenaWeb.LoginChannel

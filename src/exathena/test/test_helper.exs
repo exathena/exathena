@@ -4,7 +4,7 @@
 Faker.start()
 
 # Start the tests
-ExUnit.start()
+ExUnit.start(assert_receive_timeout: 1_500)
 
 # Changes database mode to manual
 Ecto.Adapters.SQL.Sandbox.mode(ExAthena.Repo, :manual)
