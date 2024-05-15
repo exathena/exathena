@@ -18,6 +18,7 @@ defmodule ExAthena do
   """
 
   @clock Application.compile_env(:exathena, :clock_module, ExAthena.Clock.Timex)
+  @server_type Application.compile_env(:exathena, :server_type, :renewal)
 
   def context do
     quote do
@@ -75,13 +76,9 @@ defmodule ExAthena do
 
   @doc "Checks if current server is Renewal"
   @spec renewal?() :: boolean()
-  def renewal?, do: server_type() == :renewal
+  def renewal?, do: @server_type == :renewal
 
   @doc "Checks if current server is Pre-Renewal"
   @spec pre_renewal?() :: boolean()
-  def pre_renewal?, do: server_type() == :pre_renewal
-
-  defp server_type do
-    Application.get_env(:exathena, :server_type, :renewal)
-  end
+  def pre_renewal?, do: @server_type == :pre_renewal
 end
