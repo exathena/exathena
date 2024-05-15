@@ -68,21 +68,16 @@ jobs:
       run: mix format --check-formatted
 
     - name: Run type check
-      run: mix dialyzer
+      run: mix dialyzer --format github --quiet-with-result
 
     - name: Analyze code
       run: mix credo -a
 
     - name: Analyse security
-      run: cd src/exathena && mix sobelow
-
-    - name: Run tests & code coverage
-      run: mix coveralls --umbrella
-      env:
-        MIX_ENV: test
+      run: mix sobelow
 
     - name: Build code coverage report
-      run: mix coveralls.json --umbrella
+      run: mix coveralls.json
       env:
         MIX_ENV: test
 

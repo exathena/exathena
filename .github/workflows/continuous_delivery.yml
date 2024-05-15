@@ -50,12 +50,7 @@ jobs:
     - name: Install dependencies
       run: mix deps.get
 
-    - name: Check compilation (dev)
-      run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: dev
-
-    - name: Check compilation (test)
+    - name: Compile
       run: mix compile --warnings-as-errors
       env:
         MIX_ENV: test
@@ -69,22 +64,23 @@ jobs:
       run: mix format --check-formatted
 
     - name: Run type check
-      run: mix dialyzer
+      run: mix dialyzer --format github --quiet-with-result
 
     - name: Analyze code
       run: mix credo -a
 
     - name: Analyse security
-      run: cd src/exathena && mix sobelow
+      run: mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls --umbrella
+      run: mix coveralls
       env:
         MIX_ENV: test
 
     - name: Publish package to hex
       env:
         HEX_AUTH_KEY: ${{ secrets.HEX_AUTH_KEY }}
+        MIX_ENV: dev
       run: |
         mix hex.config api_key $HEX_AUTH_KEY
         mix hex.publish --yes

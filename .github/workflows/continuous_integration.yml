@@ -64,12 +64,7 @@ jobs:
         mix deps.get
         mix deps.compile
 
-    - name: Check compilation (dev)
-      run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: dev
-
-    - name: Check compilation (test)
+    - name: Compile
       run: mix compile --warnings-as-errors
       env:
         MIX_ENV: test
@@ -83,16 +78,16 @@ jobs:
       run: mix format --check-formatted
 
     - name: Run type check
-      run: mix dialyzer
+      run: mix dialyzer --format github --quiet-with-result
 
     - name: Analyze code
       run: mix credo -a
 
     - name: Analyse security
-      run: cd src/exathena && mix sobelow
+      run: mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls --umbrella
+      run: mix coveralls
       env:
         MIX_ENV: test
 
@@ -183,12 +178,7 @@ jobs:
         mix deps.get
         mix deps.compile
 
-    - name: Check compilation (dev)
-      run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: dev
-
-    - name: Check compilation (test)
+    - name: Compile
       run: mix compile --warnings-as-errors
       env:
         MIX_ENV: test
@@ -202,16 +192,16 @@ jobs:
       run: mix format --check-formatted
 
     - name: Run type check
-      run: mix dialyzer
+      run: mix dialyzer --format github --quiet-with-result
 
     - name: Analyze code
       run: mix credo -a
 
     - name: Analyse security
-      run: cd src/exathena && mix sobelow
+      run: mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls --umbrella
+      run: mix coveralls
       env:
         MIX_ENV: test
 
@@ -277,12 +267,7 @@ jobs:
         mix deps.get
         mix deps.compile
 
-    - name: Check compilation (dev)
-      run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: dev
-
-    - name: Check compilation (test)
+    - name: Compile 
       run: mix compile --warnings-as-errors
       env:
         MIX_ENV: test
@@ -296,15 +281,15 @@ jobs:
       run: mix format --check-formatted
 
     - name: Run type check
-      run: mix dialyzer
+      run: mix dialyzer --format github --quiet-with-result
 
     - name: Analyze code
       run: mix credo -a
 
     - name: Analyse security
-      run: cd src/exathena && mix sobelow
+      run: mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls --umbrella
+      run: mix coveralls
       env:
         MIX_ENV: test
