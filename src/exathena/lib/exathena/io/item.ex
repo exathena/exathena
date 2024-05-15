@@ -177,11 +177,15 @@ defmodule ExAthena.IO.Item do
 
     Enum.reduce(filters, items, fn {field, value}, acc ->
       if field in fields do
-        func.(acc, fn item -> Map.get(item, field) == value end)
+        func.(acc, &do_filter_item(&1, field, value))
       else
         acc
       end
     end)
+  end
+
+  defp do_filter_item(item, field, value) do
+    Map.get(item, field) == value
   end
 
   defp load_item_data!(state = %Item{options: options}) do

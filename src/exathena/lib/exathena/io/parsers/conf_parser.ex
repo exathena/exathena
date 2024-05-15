@@ -113,16 +113,16 @@ defmodule ExAthena.IO.ConfParser do
   # Returns true if the parser can ignore the line passed in.
   # This is done if the line is a comment just whitespace
   defp can_skip_line?(line) do
-    is_comment?(line) or is_empty?(line)
+    comment?(line) or empty?(line)
   end
 
   # Returns true if the line starts with double slashes
-  defp is_comment?(line) do
+  defp comment?(line) do
     String.trim(line) =~ @double_slash_comment_regex
   end
 
   # Returns true if the line contains only whitespace
-  defp is_empty?(line) do
+  defp empty?(line) do
     String.trim(line) == ""
   end
 end

@@ -79,51 +79,40 @@ defmodule ExAthena.IO.ConfParser.State do
   #       we will validate their type later on.
   defp convert_value(value) do
     cond do
-      is_boolean?(value) ->
-        convert_boolean(value)
-
-      is_int?(value) ->
-        convert_integer(value)
-
-      is_float_or_decimal?(value) ->
-        convert_decimal(value)
-
-      is_atom?(value) ->
-        String.to_existing_atom(value)
-
-      is_list?(value) ->
-        convert_list(value)
-
-      true ->
-        value
+      boolean?(value) -> convert_boolean(value)
+      int?(value) -> convert_integer(value)
+      float_or_decimal?(value) -> convert_decimal(value)
+      atom?(value) -> String.to_existing_atom(value)
+      list?(value) -> convert_list(value)
+      :else -> value
     end
   end
 
-  defp is_atom?(value) do
+  defp atom?(value) do
     _ = String.to_existing_atom(value)
     true
   rescue
     _ -> false
   end
 
-  defp is_boolean?(value) when value in @reserved_boolean_words, do: true
-  defp is_boolean?(_), do: false
+  defp boolean?(value) when value in @reserved_boolean_words, do: true
+  defp boolean?(_), do: false
 
-  defp is_float_or_decimal?(value) do
+  defp float_or_decimal?(value) do
     case Regex.run(~r/^\d*\.?\d+$/, value) do
       [^value] -> true
       _ -> false
     end
   end
 
-  defp is_int?(value) do
+  defp int?(value) do
     case Regex.run(~r/^-?[0-9]*$/, value) do
       [^value] -> true
       nil -> false
     end
   end
 
-  defp is_list?(value) do
+  defp list?(value) do
     case Regex.run(~r/[,]/, value) do
       [_ | _] -> true
       nil -> false
