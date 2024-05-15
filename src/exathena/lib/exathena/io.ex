@@ -224,7 +224,7 @@ defmodule ExAthena.IO do
       end
 
       defp maybe_do_reload([], category) do
-        Logger.warn(~s/Configuration items with category "#{category}" can't be reloaded/,
+        Logger.warning(~s/Configuration items with category "#{category}" can't be reloaded/,
           category: category
         )
 

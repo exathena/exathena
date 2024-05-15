@@ -99,21 +99,16 @@ defmodule ExAthenaLogger.Console.AuthenticationLoggerTest do
     end
   end
 
-  describe "get_log_type/1" do
-    test "returns log type for request authentication" do
-      assert :debug == AuthenticationLogger.get_log_type(%{type: :request})
-    end
+  @expected_log_level [
+    {:type, :request, :debug},
+    {:result, :accepted, :info},
+    {:result, :invalid_credentials, :warning},
+    {:result, :user_banned, :error}
+  ]
 
-    test "returns log type for accepted connection" do
-      assert :info == AuthenticationLogger.get_log_type(%{result: :accepted})
-    end
-
-    test "returns log type for invalid credentials" do
-      assert :warn == AuthenticationLogger.get_log_type(%{result: :invalid_credentials})
-    end
-
-    test "returns log type for user already banned" do
-      assert :error == AuthenticationLogger.get_log_type(%{result: :user_banned})
+  test "get_log_type/1 returns log type for request authentication" do
+    for {key, value, level} <- @expected_log_level do
+      assert AuthenticationLogger.get_log_type(%{key => value}) == level
     end
   end
 end

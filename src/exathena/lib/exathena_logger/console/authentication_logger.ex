@@ -70,5 +70,5 @@ defmodule ExAthenaLogger.Console.AuthenticationLogger do
   def get_log_type(%{type: :request}), do: :debug
   def get_log_type(%{result: :accepted}), do: :info
   def get_log_type(%{result: :user_banned}), do: :error
-  def get_log_type(%{result: _}), do: :warn
+  def get_log_type(%{result: _}), do: :warning
 end

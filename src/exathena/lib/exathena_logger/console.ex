@@ -19,7 +19,7 @@ defmodule ExAthenaLogger.Console do
   @doc """
   Gets the Logger level from metadata
   """
-  @callback get_log_type(map()) :: :info | :debug | :error | :warn
+  @callback get_log_type(map()) :: :info | :debug | :error | :warning
 
   alias ExAthenaLogger.Console.AuthenticationLogger
 
@@ -33,7 +33,7 @@ defmodule ExAthenaLogger.Console do
     case get_log_type(event, meta) do
       :info -> Logger.info(message, metadata)
       :debug -> Logger.debug(message, metadata)
-      :warn -> Logger.warn(message, metadata)
+      :warning -> Logger.warning(message, metadata)
       :error -> Logger.error(message, metadata)
     end
   end

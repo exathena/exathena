@@ -9,7 +9,7 @@ defmodule ExAthena.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.12",
+      elixir: "~> 1.16",
       elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -18,7 +18,7 @@ defmodule ExAthena.MixProject do
         "coveralls.post": :test,
         "coveralls.html": :test
       ],
-      compilers: [:gettext] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases()
@@ -41,8 +41,8 @@ defmodule ExAthena.MixProject do
     [
       {:assertions, "~> 0.10", only: :test},
       {:bypass, "~> 2.1", only: :test},
-      {:cloak_ecto, "~> 1.2"},
-      {:ecto_sql, "~> 3.6"},
+      {:cloak_ecto, "~> 1.2.0"},
+      {:ecto_sql, "~> 3.10"},
       {:ex_machina, "~> 2.7", only: [:dev, :test]},
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:gettext, "~> 0.18"},
@@ -58,7 +58,7 @@ defmodule ExAthena.MixProject do
       {:remote_ip, "~> 1.0"},
       {:sobelow, "~> 0.11", only: :dev, runtime: false},
       {:swoosh, "~> 1.3"},
-      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:temporary_env, "~> 2.0"},
       {:timex, "~> 3.7"},

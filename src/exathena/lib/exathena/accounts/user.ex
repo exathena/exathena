@@ -4,10 +4,8 @@ defmodule ExAthena.Accounts.User do
   """
   use ExAthena, :schema
 
-  alias ExAthena.Database.Group
-
   @typep account_type :: :player | :server
-  @typep role :: Group.role()
+  @typep role :: ExAthena.Database.Group.role()
   @typep sex :: :masculine | :feminine | :diverse
 
   @typedoc false
@@ -55,9 +53,7 @@ defmodule ExAthena.Accounts.User do
   )a
 
   @allowed_account_type ~w(player server)a
-
-  @allowed_role Group.__allowed_roles__()
-
+  @allowed_role ExAthena.Database.Group.__allowed_roles__()
   @allowed_sex ~w(masculine feminine diverse)a
 
   schema "users" do
