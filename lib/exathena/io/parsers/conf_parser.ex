@@ -55,7 +55,7 @@ defmodule ExAthena.IO.ConfParser do
 
   defp read_and_parse_file(config_path) do
     config_path
-    |> File.stream!([], :line)
+    |> File.stream!(:line)
     |> parse_file(config_path)
     |> handle_result()
   end
