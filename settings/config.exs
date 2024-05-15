@@ -14,13 +14,13 @@ config :exathena, ExAthenaWeb.Endpoint,
   live_view: [signing_salt: "oLv1XUQM"]
 
 # Configures the repos
-config :exathena, ExAthena.Repo, priv: "../../sql-files"
-config :exathena, ExAthenaLogger.Repo, priv: "../../sql-files/logs"
+config :exathena, ExAthena.Repo, priv: "sql-files"
+config :exathena, ExAthenaLogger.Repo, priv: "sql-files/logs"
 
 # Configures the translation (getttext)
 config :exathena, ExAthenaWeb.Gettext,
   default_locale: "en_US",
-  priv: "../../translations"
+  priv: "translations"
 
 # Configures Cloak for data encryption
 config :exathena, ExAthena.Vault,
