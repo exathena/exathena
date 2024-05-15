@@ -33,7 +33,7 @@ defmodule ExAthena.IO.ConfParser do
     base_path = Application.get_env(:exathena, :settings_path, "")
 
     path =
-      [base_path, "settings", config_path]
+      [base_path, "conf", config_path]
       |> Path.join()
       |> Path.expand()
       |> Path.absname()

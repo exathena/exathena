@@ -1,6 +1,6 @@
 defmodule ExAthena.Config.SubnetAthena do
   @moduledoc """
-  The `settings/subnet_athena.conf` schema representation.
+  The `conf/subnet_athena.conf` schema representation.
   """
   use ExAthena, :schema
 
