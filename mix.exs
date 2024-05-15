@@ -10,6 +10,7 @@ defmodule ExAthena.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
+        dialyzer: :dev,
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
@@ -36,12 +37,12 @@ defmodule ExAthena.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-defp dialyzer do
+  defp dialyzer do
     [
       plt_core_path: "tmp/plts",
       plt_file: {:no_warn, "tmp/dialyzer.plt"},
       plt_add_apps: [:ecto, :phoenix, :mix],
-      ignore_warnings: ".dialyzerignore"
+      ignore_warnings: ".dialyzer_ignore.exs"
     ]
   end
 
@@ -67,7 +68,6 @@ defp dialyzer do
 
   defp deps do
     [
-      
       {:cloak_ecto, "~> 1.2.0"},
       {:ecto_sql, "~> 3.10"},
       {:gettext, "~> 0.18"},
