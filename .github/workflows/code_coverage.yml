@@ -5,8 +5,8 @@ on:
     branches: [ main ]
 
 env:
-  ELIXIR_VERSION: 1.13.4
-  OTP_VERSION: 24.3.4.2
+  ELIXIR_VERSION: 1.16.2
+  OTP_VERSION: 26.2.3
 
 jobs:
   test:
