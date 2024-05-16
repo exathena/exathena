@@ -74,7 +74,7 @@ defmodule ExAthena.MixProject do
       {:jason, "~> 1.2"},
       {:oban, "~> 2.11"},
       {:pbkdf2_elixir, "~> 2.0"},
-      {:phoenix, "~> 1.6.6"},
+      {:phoenix, "~> 1.7.12"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_live_dashboard, "~> 0.5"},
       {:plug_cowboy, "~> 2.5"},
