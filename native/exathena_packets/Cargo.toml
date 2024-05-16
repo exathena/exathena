@@ -1,0 +1,22 @@
+[package]
+name = "exathena_packets"
+# We don't use versioning in the in this crate.
+# Please check the `mix.exs` file at the root of this project for the current version.
+version = "0.1.0"
+authors = []
+edition = "2021"
+
+[lib]
+proc-macro = true
+name = "exathena_packets"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+ragnarok_packets = { git = "https://github.com/vE5li/korangar.git", features = ["derive"] }
+rustler = { version = "0.32", default-features = false, features = ["derive", "nif_version_2_17"] }
+proc-macro-error = { version = "1", default-features = false }
+
+[features]
+debug = []
+derive = []
