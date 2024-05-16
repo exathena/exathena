@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  ELIXIR_VERSION: 1.16.2
+  ELIXIR_VERSION: 1.16.2-otp-26
   OTP_VERSION: 26.2.3
 
 jobs:
