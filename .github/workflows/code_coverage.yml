@@ -7,6 +7,7 @@ on:
 env:
   ELIXIR_VERSION: 1.16.2
   OTP_VERSION: 26.2.3
+  MIX_ENV: test
 
 jobs:
   test:
@@ -15,7 +16,7 @@ jobs:
 
     services:
       db:
-        image: postgres:13.1
+        image: postgres:14
         ports: ['5432:5432']
         env:
           POSTGRES_PASSWORD: postgres
@@ -35,6 +36,7 @@ jobs:
         otp-version: ${{ env.OTP_VERSION }}
 
     - name: Restore dependencies cache
+      id: mix-cache
       uses: actions/cache@v2
       with:
         path: |
@@ -42,44 +44,21 @@ jobs:
           _build
           tmp
           tmp/plts
-        key: ${{ runner.os }}-mix_${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}-mix-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          Linux-mix_
+          ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}-mix-
 
     - name: Install dependencies
-      run: mix deps.get
-
-    - name: Check compilation (dev)
-      run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: dev
-
-    - name: Check compilation (test)
-      run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: test
-
-    - name: Create dialyzer plt file
+      if: steps.mix-cache.outputs.cache-hit != 'true'
       run: |
-        mkdir -p tmp/plts
-        mix dialyzer --plt
+        mix deps.get
+        mix deps.compile
 
-    - name: Check format
-      run: mix format --check-formatted
+    - name: Compile
+      run: mix compile --warnings-as-errors
 
-    - name: Run type check
-      run: mix dialyzer --format github --quiet-with-result
-
-    - name: Analyze code
-      run: mix credo -a
-
-    - name: Analyse security
-      run: mix sobelow
-
-    - name: Build code coverage report
+    - name: Run tests & code coverage
       run: mix coveralls.json
-      env:
-        MIX_ENV: test
 
     - name: Upload code coverage
       env:
