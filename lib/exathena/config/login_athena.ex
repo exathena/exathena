@@ -1,6 +1,6 @@
 defmodule ExAthena.Config.LoginAthena do
   @moduledoc """
-  The `settings/login_athena.conf` schema representation.
+  The `conf/login_athena.conf` schema representation.
   """
   use ExAthena, :schema
 

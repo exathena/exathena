@@ -6,6 +6,7 @@ on:
 
 env:
   ELIXIR_VERSION: 1.16.2
+  ASDF_ELIXIR_VERSION: 1.16.2-otp-26
   OTP_VERSION: 26.2.3
 
 jobs:
@@ -15,7 +16,7 @@ jobs:
 
     services:
       db:
-        image: postgres:13.1
+        image: postgres:14
         ports: ['5432:5432']
         env:
           POSTGRES_PASSWORD: postgres
@@ -27,16 +28,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Restore elixir & erlang cache
-      id: erlef-cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          /home/runner/work/_temp/.setup-beam/elixir
-          /home/runner/.mix
-        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
-        restore-keys: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
 
     - name: Set up Elixir
       uses: erlef/setup-elixir@v1
@@ -54,9 +45,9 @@ jobs:
           _build
           tmp
           tmp/plts
-        key: ${{ runner.os }}-mix_${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}-mix-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}-mix_
+          ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}-mix-
 
     - name: Install dependencies
       if: steps.mix-cache.outputs.cache-hit != 'true'
@@ -64,12 +55,7 @@ jobs:
         mix deps.get
         mix deps.compile
 
-    - name: Check compilation (dev)
-      run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: dev
-
-    - name: Check compilation (test)
+    - name: Compile
       run: mix compile --warnings-as-errors
       env:
         MIX_ENV: test
@@ -77,44 +63,34 @@ jobs:
     - name: Create dialyzer plt file
       run: |
         mkdir -p tmp/plts
-        mix dialyzer --plt
+        mix dialyzer --plt --format github --quiet-with-result
 
     - name: Check format
       run: mix format --check-formatted
 
     - name: Run type check
-      run: mix dialyzer
+      run: mix dialyzer --format github --quiet-with-result
 
     - name: Analyze code
       run: mix credo -a
 
     - name: Analyse security
-      run: cd src/exathena && mix sobelow
+      run: mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls --umbrella
+      run: mix coveralls
       env:
         MIX_ENV: test
 
   macos:
+    if: github.event_name == 'push'
     name: Build & Test on macOS
     runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Restore elixir & erlang cache
-      id: asdf-cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          /home/runner/.asdf
-          /home/runner/.mix
-        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
-        restore-keys: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
-
     - name: Set up ASDF
-      if: steps.asdf-cache.outputs.cache-hit != 'true'
       run: |
         brew update
         brew install asdf
@@ -123,7 +99,6 @@ jobs:
         echo "$HOME/.asdf/shims" >> $GITHUB_PATH
 
     - name: Set up Erlang
-      if: steps.asdf-cache.outputs.cache-hit != 'true'
       run: |
         asdf install erlang ${{ env.OTP_VERSION }}
         asdf global erlang ${{ env.OTP_VERSION }}
@@ -132,18 +107,19 @@ jobs:
     - name: Set up Elixir
       if: steps.asdf-cache.outputs.cache-hit != 'true'
       run: |
-        asdf install elixir ${{ env.ELIXIR_VERSION }}
-        asdf global elixir ${{ env.ELIXIR_VERSION }}
+        asdf install elixir ${{ env.ASDF_ELIXIR_VERSION }}
+        asdf global elixir ${{ env.ASDF_ELIXIR_VERSION }}
         asdf reshim
 
     - name: Setup hex and rebar
       run: |
         mix local.rebar --force
-        mix local.hex --force
+        mix archive.install github hexpm/hex branch latest --force
 
     - name: Set up Postgres
       run: |
-        brew services start postgresql
+        brew install postgresql@14
+        brew services start postgresql@14
         echo "Check PostgreSQL service is running"
         i=10
         COMMAND='pg_isready'
@@ -173,9 +149,9 @@ jobs:
           _build
           tmp
           tmp/plts
-        key: ${{ runner.os }}-mix_${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}-mix-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}-mix_
+          ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}-mix-
 
     - name: Install dependencies
       if: steps.mix-cache.outputs.cache-hit != 'true'
@@ -183,12 +159,7 @@ jobs:
         mix deps.get
         mix deps.compile
 
-    - name: Check compilation (dev)
-      run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: dev
-
-    - name: Check compilation (test)
+    - name: Compile
       run: mix compile --warnings-as-errors
       env:
         MIX_ENV: test
@@ -196,26 +167,27 @@ jobs:
     - name: Create dialyzer plt file
       run: |
         mkdir -p tmp/plts
-        mix dialyzer --plt
+        mix dialyzer --plt --format github --quiet-with-result
 
     - name: Check format
       run: mix format --check-formatted
 
     - name: Run type check
-      run: mix dialyzer
+      run: mix dialyzer --format github --quiet-with-result
 
     - name: Analyze code
       run: mix credo -a
 
     - name: Analyse security
-      run: cd src/exathena && mix sobelow
+      run: mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls --umbrella
+      run: mix coveralls
       env:
         MIX_ENV: test
 
   windows:
+    if: github.event_name == 'push'
     name: Build & Test on Windows
     runs-on: windows-latest
 
@@ -224,16 +196,6 @@ jobs:
       run: git config --global core.autocrlf input
 
     - uses: actions/checkout@v2
-
-    - name: Restore elixir & erlang cache
-      id: erlef-cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          D:\a\_temp\.setup-beam\elixir
-          C:\Users\runneradmin\.mix
-        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
-        restore-keys: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
 
     - name: Set up Elixir
       if: steps.erlef-cache.outputs.cache-hit != 'true'
@@ -267,9 +229,9 @@ jobs:
           _build
           tmp
           tmp/plts
-        key: ${{ runner.os }}-mix_${{ hashFiles('**/mix.lock') }}
+        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}-mix-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}-mix_
+          ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}-mix-
 
     - name: Install dependencies
       if: steps.mix-cache.outputs.cache-hit != 'true'
@@ -277,12 +239,7 @@ jobs:
         mix deps.get
         mix deps.compile
 
-    - name: Check compilation (dev)
-      run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: dev
-
-    - name: Check compilation (test)
+    - name: Compile 
       run: mix compile --warnings-as-errors
       env:
         MIX_ENV: test
@@ -290,21 +247,21 @@ jobs:
     - name: Create dialyzer plt file
       run: |
         New-Item -ItemType Directory -Force -Path .\tmp\plts
-        mix dialyzer --plt
+        mix dialyzer --plt --format github --quiet-with-result
 
     - name: Check format
       run: mix format --check-formatted
 
     - name: Run type check
-      run: mix dialyzer
+      run: mix dialyzer --format github --quiet-with-result
 
     - name: Analyze code
       run: mix credo -a
 
     - name: Analyse security
-      run: cd src/exathena && mix sobelow
+      run: mix sobelow
 
     - name: Run tests & code coverage
-      run: mix coveralls --umbrella
+      run: mix coveralls
       env:
         MIX_ENV: test

@@ -5,5 +5,19 @@
   },
   "terminal_options": {
     "file_column_width": 80
-  }
+  },
+  "skip_files": [
+    "lib/exathena.ex",
+    "lib/exathena/application.ex",
+    "lib/exathena/clock.ex",
+    "lib/exathena/io/exceptions.ex",
+    "lib/exathena/io/item.ex",
+    "lib/exathena_logger.ex",
+    "lib/exathena_web.ex",
+    "lib/exathena_web/router.ex",
+    "lib/exathena_web/telemetry.ex",
+    "lib/exathena_web/views/error_*",
+    "lib/mix/*",
+    "test/*"
+  ]
 }

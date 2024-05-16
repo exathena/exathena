@@ -1,10 +1,10 @@
 # exAthena
 
-[![continuous integration](https://github.com/ragnamoba/exathena/actions/workflows/continuous_integration.yml/badge.svg)](https://github.com/ragnamoba/exathena/actions/workflows/continuous_integration.yml)
+[![continuous integration](https://github.com/supaMOBA/exathena/actions/workflows/continuous_integration.yml/badge.svg)](https://github.com/ragnamoba/exathena/actions/workflows/continuous_integration.yml)
 [![Hex pm](http://img.shields.io/hexpm/v/exathena.svg?style=flat)](https://hex.pm/packages/exathena)
-[![codecov](https://codecov.io/gh/ragnamoba/exathena/branch/main/graph/badge.svg?token=SOSBBQ5L4Y)](https://codecov.io/gh/ragnamoba/exathena)
-![GitHub](https://img.shields.io/github/license/ragnamoba/exathena.svg)
-![GitHub repo size](https://img.shields.io/github/repo-size/ragnamoba/exathena.svg)
+[![codecov](https://codecov.io/gh/supaMOBA/exathena/branch/main/graph/badge.svg?token=SOSBBQ5L4Y)](https://codecov.io/gh/ragnamoba/exathena)
+![GitHub](https://img.shields.io/github/license/supaMOBA/exathena.svg)
+![GitHub repo size](https://img.shields.io/github/repo-size/supaMOBA/exathena.svg)
 
 > exAthena is a collaborative software development project revolving around the creation of a robust massively multiplayer online role playing game (MMORPG) server package. Written in Elixir, the program is very versatile and provides NPCs, warps and modifications. The project is jointly managed by a group of volunteers located around the world as well as a tremendous community providing QA and support. exAthena is a continuation of the eAthena project.
 
@@ -40,16 +40,16 @@ differs between the varying operating systems available.
 
 ## 2. Installation
 
-- [Windows](https://github.com/ragnamoba/exathena/wiki/Installing-on-Windows)
-- [Linux](https://github.com/ragnamoba/exathena/wiki/Installing-on-Linix)
-- [macOS](https://github.com/ragnamoba/exathena/wiki/Installing-on-macOS)
+- [Windows](https://github.com/supaMOBA/exathena/wiki/Installing-on-Windows)
+- [Linux](https://github.com/supaMOBA/exathena/wiki/Installing-on-Linix)
+- [macOS](https://github.com/supaMOBA/exathena/wiki/Installing-on-macOS)
 
 ## 3. Troubleshooting
 
 If you're having problems with starting your server, the first thing you should
 do is check what's happening on your consoles. More often that not, all support issues
-can be solved simply by looking at the error messages given. Check out the [wiki](https://github.com/ragnamoba/exathena/wiki)
-or [discussions](https://github.com/ragnamoba/exathena/discussions) if you need more support on troubleshooting.
+can be solved simply by looking at the error messages given. Check out the [wiki](./wiki)
+or [discussions](./discussions) if you need more support on troubleshooting.
 
 ## 4. More Documentation
 
@@ -61,9 +61,9 @@ assistance elsewhere.
 
 ## 5. How to Contribute
 
-Details on how to contribute to exAthena can be found in [CONTRIBUTING.md](https://github.com/ragnamoba/exathena/blob/master/.github/CONTRIBUTING.md)!
+Details on how to contribute to exAthena can be found in [CONTRIBUTING.md](.github/CONTRIBUTING.md)!
 
 ## 6. License
 
-Copyright (c) exAthena Development Team - Licensed under [GNU General Public License v3.0](https://github.com/ragnamoba/exathena/blob/master/LICENSE)
+Copyright (c) exAthena Development Team - Licensed under [GNU General Public License v3.0](./LICENSE)
 
