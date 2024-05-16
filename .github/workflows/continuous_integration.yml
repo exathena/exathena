@@ -83,6 +83,7 @@ jobs:
         MIX_ENV: test
 
   macos:
+    if: github.event_name == 'push'
     name: Build & Test on macOS
     runs-on: macos-latest
 
@@ -186,6 +187,7 @@ jobs:
         MIX_ENV: test
 
   windows:
+    if: github.event_name == 'push'
     name: Build & Test on Windows
     runs-on: windows-latest
 
