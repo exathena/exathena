@@ -5,7 +5,8 @@ on:
     branches: [ main ]
 
 env:
-  ELIXIR_VERSION: 1.16.2-otp-26
+  ELIXIR_VERSION: 1.16.2
+  ASDF_ELIXIR_VERSION: 1.16.2-otp-26
   OTP_VERSION: 26.2.3
 
 jobs:
@@ -15,7 +16,7 @@ jobs:
 
     services:
       db:
-        image: postgres:13.1
+        image: postgres:14
         ports: ['5432:5432']
         env:
           POSTGRES_PASSWORD: postgres
@@ -127,8 +128,8 @@ jobs:
     - name: Set up Elixir
       if: steps.asdf-cache.outputs.cache-hit != 'true'
       run: |
-        asdf install elixir ${{ env.ELIXIR_VERSION }}
-        asdf global elixir ${{ env.ELIXIR_VERSION }}
+        asdf install elixir ${{ env.ASDF_ELIXIR_VERSION }}
+        asdf global elixir ${{ env.ASDF_ELIXIR_VERSION }}
         asdf reshim
 
     - name: Setup hex and rebar
@@ -138,6 +139,7 @@ jobs:
 
     - name: Set up Postgres
       run: |
+        brew install postgresql@14
         brew services start postgresql@14
         echo "Check PostgreSQL service is running"
         i=10
