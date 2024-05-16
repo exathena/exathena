@@ -89,18 +89,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Restore elixir & erlang cache
-      id: asdf-cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          /home/runner/.asdf
-          /home/runner/.mix
-        key: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
-        restore-keys: ${{ runner.os }}-elixir_${{ env.ELIXIR_VERSION }}-erlang_${{ env.OTP_VERSION }}
-
     - name: Set up ASDF
-      if: steps.asdf-cache.outputs.cache-hit != 'true'
       run: |
         brew update
         brew install asdf
@@ -109,7 +98,6 @@ jobs:
         echo "$HOME/.asdf/shims" >> $GITHUB_PATH
 
     - name: Set up Erlang
-      if: steps.asdf-cache.outputs.cache-hit != 'true'
       run: |
         asdf install erlang ${{ env.OTP_VERSION }}
         asdf global erlang ${{ env.OTP_VERSION }}
