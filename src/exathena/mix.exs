@@ -47,7 +47,7 @@ defmodule ExAthena.MixProject do
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
-      {:mox, "~> 1.0.0", only: :test},
+      {:mox, "~> 1.1.0", only: :test},
       {:oban, "~> 2.11"},
       {:pbkdf2_elixir, "~> 2.0"},
       {:phoenix, "~> 1.6.6"},
