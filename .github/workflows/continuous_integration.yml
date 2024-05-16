@@ -8,6 +8,7 @@ env:
   ELIXIR_VERSION: 1.16.2
   ASDF_ELIXIR_VERSION: 1.16.2-otp-26
   OTP_VERSION: 26.2.3
+  MIX_ENV: test
 
 jobs:
   linux:
@@ -57,8 +58,6 @@ jobs:
 
     - name: Compile
       run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: test
 
     - name: Create dialyzer plt file
       run: |
@@ -79,8 +78,6 @@ jobs:
 
     - name: Run tests & code coverage
       run: mix coveralls
-      env:
-        MIX_ENV: test
 
   macos:
     if: github.event_name == 'push'
@@ -161,8 +158,6 @@ jobs:
 
     - name: Compile
       run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: test
 
     - name: Create dialyzer plt file
       run: |
@@ -183,8 +178,6 @@ jobs:
 
     - name: Run tests & code coverage
       run: mix coveralls
-      env:
-        MIX_ENV: test
 
   windows:
     if: github.event_name == 'push'
@@ -241,8 +234,6 @@ jobs:
 
     - name: Compile 
       run: mix compile --warnings-as-errors
-      env:
-        MIX_ENV: test
 
     - name: Create dialyzer plt file
       run: |
@@ -263,5 +254,3 @@ jobs:
 
     - name: Run tests & code coverage
       run: mix coveralls
-      env:
-        MIX_ENV: test

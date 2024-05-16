@@ -87,11 +87,13 @@ defmodule ExAthena.MixProject do
       {:timex, "~> 3.7"},
       {:yaml_elixir, "~> 2.8"},
 
-      # Dev
+      # Code quality & Security
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.11", only: [:dev, :test], runtime: false},
+
+      # Docs
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:sobelow, "~> 0.11", only: :dev, runtime: false},
 
       # Test
       {:mox, "~> 1.0.0", only: :test},
