@@ -63,7 +63,7 @@ jobs:
     - name: Create dialyzer plt file
       run: |
         mkdir -p tmp/plts
-        mix dialyzer --plt
+        mix dialyzer --plt --format github --quiet-with-result
 
     - name: Check format
       run: mix format --check-formatted
@@ -178,7 +178,7 @@ jobs:
     - name: Create dialyzer plt file
       run: |
         mkdir -p tmp/plts
-        mix dialyzer --plt
+        mix dialyzer --plt --format github --quiet-with-result
 
     - name: Check format
       run: mix format --check-formatted
@@ -257,7 +257,7 @@ jobs:
     - name: Create dialyzer plt file
       run: |
         New-Item -ItemType Directory -Force -Path .\tmp\plts
-        mix dialyzer --plt
+        mix dialyzer --plt --format github --quiet-with-result
 
     - name: Check format
       run: mix format --check-formatted
