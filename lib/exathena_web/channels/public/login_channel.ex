@@ -6,7 +6,7 @@ defmodule ExAthenaWeb.LoginChannel do
   alias ExAthena.Config
   alias ExAthena.Config.LoginAthena
   alias ExAthenaEvents
-  alias ExAthenaWeb.Channel.LoginView
+  alias ExAthenaWeb.LoginChannelJSON, as: JSON
 
   @impl true
   def join("login", _params, socket) do
@@ -29,7 +29,7 @@ defmodule ExAthenaWeb.LoginChannel do
       {:noreply, socket}
     else
       {:error, reason} ->
-        error = render(LoginView, "#{reason}.json", %{})
+        error = JSON.render(reason, %{})
         ExAthenaEvents.user_authentication_rejected(socket, reason)
         push(socket, "authentication_rejected", error)
 
@@ -37,7 +37,7 @@ defmodule ExAthenaWeb.LoginChannel do
 
       {:error, :user_banned, banned_until} ->
         ExAthenaEvents.user_authentication_rejected(socket, :user_banned)
-        error = render(LoginView, "user_banned.json", banned_until: banned_until)
+        error = JSON.render(:user_banned, banned_until: banned_until)
         push(socket, "authentication_rejected", error)
 
         {:reply, {:error, error}, socket}

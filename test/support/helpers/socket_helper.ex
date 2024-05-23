@@ -17,7 +17,8 @@ defmodule ExAthenaWeb.SocketHelper do
       x_headers: [{"x-real-ip", "200.120.10.67"}]
     }
 
-    with {:ok, socket} <- connect(ExAthenaWeb.PublicSocket, socket_payload, connect_info),
+    with {:ok, socket} <-
+           connect(ExAthenaWeb.PublicSocket, socket_payload, connect_info: connect_info),
          {:ok, _params, socket} <- subscribe_and_join(socket, channel, topic, channel_payload) do
       socket
     end
