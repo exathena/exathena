@@ -41,7 +41,7 @@ defmodule ExAthena.MixProject do
     [
       plt_core_path: "tmp/plts",
       plt_file: {:no_warn, "tmp/dialyzer.plt"},
-      plt_add_apps: [:ecto, :phoenix, :mix],
+      plt_add_apps: [:ecto, :phoenix, :mix, :ex_unit],
       ignore_warnings: ".dialyzer_ignore.exs"
     ]
   end
@@ -68,39 +68,56 @@ defmodule ExAthena.MixProject do
 
   defp deps do
     [
-      {:cloak_ecto, "~> 1.2.0"},
-      {:ecto_sql, "~> 3.10"},
-      {:gettext, "~> 0.18"},
-      {:jason, "~> 1.2"},
-      {:oban, "~> 2.11"},
-      {:pbkdf2_elixir, "~> 2.0"},
-      {:phoenix, "~> 1.6.6"},
-      {:phoenix_ecto, "~> 4.4"},
-      {:phoenix_live_dashboard, "~> 0.5"},
-      {:plug_cowboy, "~> 2.5"},
+      # Phoenix Framework
+      {:phoenix, "~> 1.7.12"},
+      {:phoenix_ecto, "~> 4.6.1"},
+      {:phoenix_live_dashboard, "~> 0.8.3"},
+      {:plug_cowboy, "~> 2.7.1"},
+
+      # Database
+      {:ecto_sql, "~> 3.11.2"},
       {:postgrex, ">= 0.0.0"},
-      {:remote_ip, "~> 1.0"},
-      {:swoosh, "~> 1.3"},
-      {:telemetry_metrics, "~> 1.0"},
-      {:telemetry_poller, "~> 1.0"},
-      {:temporary_env, "~> 2.0"},
-      {:timex, "~> 3.7"},
-      {:yaml_elixir, "~> 2.8"},
+
+      # Encryption
+      {:cloak_ecto, "~> 1.2.0"},
+      {:pbkdf2_elixir, "~> 2.2.0"},
+
+      # Background jobs
+      {:oban, "~> 2.17.10"},
+
+      # Mailing
+      {:swoosh, "~> 1.16.7"},
+
+      # Telemetry
+      {:telemetry_metrics, "~> 1.0.0"},
+      {:telemetry_poller, "~> 1.1.0"},
+
+      # Peer data
+      {:remote_ip, "~> 1.1.0"},
+
+      # Internationalization
+      {:gettext, "~> 0.24.0"},
+      {:timex, "~> 3.7.11"},
+
+      # File types
+      {:jason, "~> 1.4.1"},
+      {:yaml_elixir, "~> 2.9.0"},
 
       # Code quality & Security
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:sobelow, "~> 0.11", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7.6", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4.3", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.13.0", only: [:dev, :test], runtime: false},
 
       # Docs
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
 
       # Test
-      {:mox, "~> 1.0.0", only: :test},
-      {:assertions, "~> 0.10", only: :test},
-      {:bypass, "~> 2.1", only: :test},
-      {:ex_machina, "~> 2.7", only: [:dev, :test]},
-      {:faker, "~> 0.17", only: [:dev, :test]},
+      {:temporary_env, "~> 2.0.1", only: :test},
+      {:mox, "~> 1.1.0", only: [:dev, :test]},
+      {:assertions, "~> 0.19.0", only: :test},
+      {:bypass, "~> 2.1.0", only: :test},
+      {:ex_machina, "~> 2.7.0", only: [:dev, :test]},
+      {:faker, "~> 0.18.0", only: [:dev, :test]},
       {:excoveralls, "~> 0.18.1", only: :test, runtime: false}
     ]
   end
@@ -110,6 +127,8 @@ defmodule ExAthena.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "exathena.load", "run sql-files/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "ecto.migrate": ["ecto.migrate", "ecto.dump"],
+      "ecto.rollback": ["ecto.rollback", "ecto.dump"],
       sobelow: ["sobelow"],
       test: ["ecto.drop -q", "ecto.create -q", "exathena.load -q", "test"]
     ]
