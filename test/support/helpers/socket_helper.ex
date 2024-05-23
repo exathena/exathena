@@ -7,7 +7,6 @@ defmodule ExAthenaWeb.SocketHelper do
   import Phoenix.ChannelTest
 
   @doc false
-  @spec join_public_channel(module(), binary(), map()) :: Phoenix.Socket.t()
   def join_public_channel(channel, topic, opts \\ []) do
     socket_payload = opts[:socket_payload] || %{}
     channel_payload = opts[:channel_payload] || %{}

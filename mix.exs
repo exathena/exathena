@@ -41,7 +41,7 @@ defmodule ExAthena.MixProject do
     [
       plt_core_path: "tmp/plts",
       plt_file: {:no_warn, "tmp/dialyzer.plt"},
-      plt_add_apps: [:ecto, :phoenix, :mix],
+      plt_add_apps: [:ecto, :phoenix, :mix, :ex_unit],
       ignore_warnings: ".dialyzer_ignore.exs"
     ]
   end
