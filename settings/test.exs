@@ -44,3 +44,6 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Configures Pbkdf2
 config :pbkdf2_elixir, rounds: 1
+
+# Don't run Oban jobs on tests automatically
+config :exathena, Oban, testing: :manual
