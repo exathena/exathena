@@ -7,20 +7,18 @@ defmodule ExAthena.Config do
   """
   use ExAthena.IO
 
-  alias ExAthena.Config.{LoginAthena, SubnetAthena}
-
   @configs %{
     login_athena: [
       name: LoginAthenaConfig,
       category: :server,
       reload?: false,
-      schema: LoginAthena
+      schema: ExAthena.Config.LoginAthena
     ],
     subnet_athena: [
       name: SubnetAthenaConfig,
       category: :server,
       reload?: false,
-      schema: SubnetAthena
+      schema: ExAthena.Config.SubnetAthena
     ]
   }
 
@@ -53,11 +51,10 @@ defmodule ExAthena.Config do
     """
     @spec unquote(id)() :: {:ok, unquote(opts[:schema]).t()} | {:error, :server_down}
     def unquote(id)() do
-      name = unquote(opts[:name])
-
-      case GenServer.whereis(name) do
-        nil -> {:error, :server_down}
-        _ -> {:ok, Item.get_data(name)}
+      if pid = GenServer.whereis(unquote(opts[:name])) do
+        {:ok, Item.get_data(pid)}
+      else
+        {:error, :server_down}
       end
     end
   end

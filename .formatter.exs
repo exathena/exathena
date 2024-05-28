@@ -12,7 +12,7 @@ locals_without_parens = [
 ]
 
 [
-  import_deps: [:ecto, :phoenix],
+  import_deps: [:ecto, :phoenix, :mox],
   inputs: ["{mix,.formatter}.exs", "sql-files/seeds.exs", "{lib,test,config}/**/*.{ex,exs}"],
   subdirectories: ["sql-files/*"],
   locals_without_parens: locals_without_parens

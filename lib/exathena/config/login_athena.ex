@@ -5,7 +5,7 @@ defmodule ExAthena.Config.LoginAthena do
   use ExAthena, :schema
 
   @typedoc """
-  The Exathena `login_athena.conf` type.
+  The ExAthena `login_athena.conf` type.
   """
   @type t :: %__MODULE__{
           bind_ip: String.t(),
@@ -109,11 +109,9 @@ defmodule ExAthena.Config.LoginAthena do
       %Ecto.Changeset{valid?: false}
 
   """
-  def changeset(login_athena = %__MODULE__{}, attrs) do
+  def changeset(login_athena, attrs) do
     login_athena
     |> cast(attrs, @fields)
     |> validate_required(@fields)
-    |> validate_inclusion(:console_msg_log, @allowed_logger_level)
-    |> validate_inclusion(:console_silent, @allowed_console_silent)
   end
 end

@@ -59,19 +59,19 @@ defmodule ExAthena.Accounts.User do
   schema "users" do
     field :username, :string
     field :password, :string
-    field :email, Binary
+    field :email, ExAthena.Encrypted.Binary
     field :account_type, Ecto.Enum, values: @allowed_account_type, default: :player
     field :role, Ecto.Enum, values: @allowed_role, default: :player
     field :sex, Ecto.Enum, values: @allowed_sex, default: :masculine
     field :birth_at, :date
     field :session_count, :integer
     field :character_slots, :integer
-    field :web_auth_token, Binary
+    field :web_auth_token, ExAthena.Encrypted.Binary
     field :web_auth_token_enabled, :boolean, default: false
 
     # Encrypted fields
-    field :encrypted_email, SHA256
-    field :encrypted_web_auth_token, SHA256
+    field :encrypted_email, Cloak.Ecto.SHA256
+    field :encrypted_web_auth_token, Cloak.Ecto.SHA256
 
     timestamps()
   end
@@ -92,7 +92,7 @@ defmodule ExAthena.Accounts.User do
       %Ecto.Changeset{valid?: false}
 
   """
-  def changeset(user = %__MODULE__{}, attrs) do
+  def changeset(user, attrs) do
     user
     |> cast(attrs, @fields)
     |> validate_required(@required_fields)
@@ -105,13 +105,13 @@ defmodule ExAthena.Accounts.User do
     |> put_password()
   end
 
-  defp encrypt_fields(changeset = %Changeset{}) do
+  defp encrypt_fields(changeset) do
     changeset
     |> put_change(:encrypted_web_auth_token, get_field(changeset, :web_auth_token))
     |> put_change(:encrypted_email, get_field(changeset, :email))
   end
 
-  defp put_password(changeset = %Changeset{}) do
+  defp put_password(changeset) do
     case get_field(changeset, :password) do
       nil -> changeset
       "$pbkdf2" <> _password -> changeset

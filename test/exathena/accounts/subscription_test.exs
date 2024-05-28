@@ -1,5 +1,5 @@
 defmodule ExAthena.Accounts.SubscriptionTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
 
   alias ExAthena.Accounts.Subscription
 
@@ -11,9 +11,7 @@ defmodule ExAthena.Accounts.SubscriptionTest do
 
     test "returns an invalid changeset" do
       changeset = refute_changeset Subscription.changeset(%Subscription{}, %{})
-
-      assert %{until: ["can't be blank"], user_id: ["can't be blank"]} ==
-               errors_on(changeset)
+      assert errors_on(changeset) == %{until: ["can't be blank"], user_id: ["can't be blank"]}
     end
   end
 end

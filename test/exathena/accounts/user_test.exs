@@ -1,5 +1,5 @@
 defmodule ExAthena.Accounts.UserTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
 
   alias ExAthena.Accounts.User
 
@@ -12,11 +12,11 @@ defmodule ExAthena.Accounts.UserTest do
     test "returns an invalid changeset" do
       changeset = refute_changeset User.changeset(%User{}, %{})
 
-      assert %{
+      assert errors_on(changeset) == %{
                email: ["can't be blank"],
                password: ["can't be blank"],
                username: ["can't be blank"]
-             } == errors_on(changeset)
+             }
     end
 
     test "returns an valid changeset with salted password" do

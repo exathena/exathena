@@ -19,6 +19,11 @@ defmodule ExAthenaWeb.ConnCase do
 
   using do
     quote do
+      # The default endpoint for testing
+      @endpoint ExAthenaWeb.Endpoint
+
+      use ExAthenaWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Assertions
       import ExAthena.Factory
@@ -28,18 +33,12 @@ defmodule ExAthenaWeb.ConnCase do
       import Phoenix.ConnTest
       import Plug.Conn
 
-      alias ExAthenaWeb.Router.Helpers, as: Routes
-
-      # The default endpoint for testing
-      @endpoint ExAthenaWeb.Endpoint
-
       setup :verify_on_exit!
     end
   end
 
   setup tags do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthena.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    ExAthena.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

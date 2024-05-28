@@ -1,21 +1,5 @@
 defmodule ExAthena do
-  @moduledoc """
-  The entrypoint for defining your backend interface, such
-  as contexts, schemas and so on.
-
-  This can be used in your application as:
-
-      use ExAthena, :context
-      use ExAthena, :schema
-
-  The definitions below will be executed for every context,
-  schema, etc, so keep them short and clean, focused
-  on imports, uses and aliases.
-
-  Do NOT define functions inside the quoted expressions
-  below. Instead, define any helper function in modules
-  and import those modules here.
-  """
+  @moduledoc false
 
   @clock Application.compile_env(:exathena, :clock_module, ExAthena.Clock.Timex)
   @server_type Application.compile_env(:exathena, :server_type, :renewal)
@@ -32,10 +16,6 @@ defmodule ExAthena do
     quote do
       use Ecto.Schema
       import Ecto.Changeset
-
-      alias Cloak.Ecto.SHA256
-      alias Ecto.Changeset
-      alias ExAthena.Encrypted.Binary
 
       @typedoc """
       The ecto association type with required value

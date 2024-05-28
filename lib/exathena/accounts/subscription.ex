@@ -15,11 +15,8 @@ defmodule ExAthena.Accounts.Subscription do
           inserted_at: NaiveDateTime.t()
         }
 
-  @fields ~w(user_id until)a
-
   schema "subscriptions" do
     field :until, :utc_datetime
-
     belongs_to :user, User
 
     timestamps(updated_at: false)
@@ -37,9 +34,9 @@ defmodule ExAthena.Accounts.Subscription do
       %Ecto.Changeset{valid?: false}
 
   """
-  def changeset(subscription = %__MODULE__{}, attrs) do
+  def changeset(subscription, attrs) do
     subscription
-    |> cast(attrs, @fields)
-    |> validate_required(@fields)
+    |> cast(attrs, [:user_id, :until])
+    |> validate_required([:user_id, :until])
   end
 end
