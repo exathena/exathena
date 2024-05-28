@@ -2,7 +2,7 @@ defmodule ExAthena.Database.AtCommand do
   @moduledoc """
   The `database/atcommands_db.yml` schema representation
   """
-  use ExAthena.Database, database: AtCommandDb
+  use ExAthena.Database
 
   @typedoc """
   The AtCommand type
@@ -13,10 +13,7 @@ defmodule ExAthena.Database.AtCommand do
           help: String.t()
         }
 
-  @fields ~w(command aliases help)a
-
   @primary_key {:command, :string, source: :Command}
-
   schema "atcommands_db.yml" do
     field :aliases, {:array, :string}, source: :Aliases
     field :help, :string, source: :Help
@@ -38,9 +35,11 @@ defmodule ExAthena.Database.AtCommand do
       %Ecto.Changeset{valid?: false}
 
   """
-  def changeset(atcommand = %__MODULE__{}, attrs) do
+  def changeset(atcommand, attrs) do
+    attrs = parse_attrs(attrs)
+
     atcommand
-    |> cast(parse_attrs(attrs), @fields)
+    |> cast(attrs, [:command, :aliases, :help])
     |> validate_required([:command])
   end
 end

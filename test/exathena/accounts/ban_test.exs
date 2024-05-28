@@ -1,5 +1,5 @@
 defmodule ExAthena.Accounts.BanTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
 
   alias ExAthena.Accounts.Ban
 
@@ -12,8 +12,10 @@ defmodule ExAthena.Accounts.BanTest do
     test "returns an invalid changeset" do
       changeset = refute_changeset Ban.changeset(%Ban{}, %{})
 
-      assert %{banned_until: ["can't be blank"], user_id: ["can't be blank"]} ==
-               errors_on(changeset)
+      assert errors_on(changeset) == %{
+               banned_until: ["can't be blank"],
+               user_id: ["can't be blank"]
+             }
     end
   end
 end

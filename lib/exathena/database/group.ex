@@ -2,7 +2,7 @@ defmodule ExAthena.Database.Group do
   @moduledoc """
   The `database/groups_db.yml` schema representation
   """
-  use ExAthena.Database, database: GroupDb
+  use ExAthena.Database
 
   @typedoc """
   The role type
@@ -41,11 +41,7 @@ defmodule ExAthena.Database.Group do
     admin
   )a
 
-  @fields ~w(id name role level inherit log_commands? commands permissions)a
-  @required_fields ~w(id name role)a
-
   @primary_key {:id, :integer, source: :Id}
-
   schema "groups_db.yml" do
     field :name, :string, source: :Name
     field :role, Ecto.Enum, values: @allowed_roles, source: :Role
@@ -73,11 +69,12 @@ defmodule ExAthena.Database.Group do
       %Ecto.Changeset{valid?: false}
 
   """
-  def changeset(group = %__MODULE__{}, attrs) do
+  def changeset(group, attrs) do
+    attrs = parse_attrs(attrs)
+
     group
-    |> cast(parse_attrs(attrs), @fields)
-    |> validate_inclusion(:role, @allowed_roles)
-    |> validate_required(@required_fields)
+    |> cast(attrs, [:id, :name, :role, :level, :inherit, :log_commands?, :commands, :permissions])
+    |> validate_required([:id, :name, :role])
   end
 
   @doc false

@@ -5,10 +5,10 @@ defmodule ExAthena.IO do
   It injects needed functions to starts all defined configurations, see
   `configuration/2`.
 
-      defmodule MyApp.Settings do
+      defmodule MyApp.Config do
         use ExAthena.IO
 
-        alias MyApp.Settings.LoginAthena
+        alias MyApp.Config.LoginAthena
 
         configure :conf do
           item :login_athena, schema: LoginAthena,
@@ -24,10 +24,7 @@ defmodule ExAthena.IO do
   - `:conf`: Designed to use our own implementation to parse the `conf` file recursively.
   - `:yaml`: Designed to use `yaml_elixir` library to parse the `yaml` file recursively.
   """
-  alias ExAthena.IO.{
-    InvalidOptionError,
-    InvalidTypeError
-  }
+  alias ExAthena.IO
 
   @doc false
   defmacro __using__(_) do
@@ -39,10 +36,10 @@ defmodule ExAthena.IO do
 
       alias ExAthena.IO.Item
 
-      @typep configuration :: %{} | %{optional(atom()) => keyword()}
-
       @configuration_type :conf
+      Module.register_attribute(__MODULE__, :configuration, accumulate: false)
       @configuration %{}
+
       @before_compile ExAthena.IO
     end
   end
@@ -95,7 +92,7 @@ defmodule ExAthena.IO do
   def ensure_type!(type) when type in @types, do: :ok
 
   def ensure_type!(type) do
-    raise InvalidTypeError, type: type
+    raise IO.InvalidTypeError, type: type
   end
 
   @doc """
@@ -134,7 +131,7 @@ defmodule ExAthena.IO do
   def ensure_opts!(opts) do
     Enum.each(@options, fn option ->
       unless Keyword.has_key?(opts, option) do
-        raise InvalidOptionError, option: option
+        raise IO.InvalidOptionError, option: option
       end
     end)
   end
@@ -159,6 +156,7 @@ defmodule ExAthena.IO do
       @doc """
       Starts all configuration under the same supervisor.
       """
+      @spec start_link(term()) :: Supervisor.on_start()
       def start_link(_) do
         Supervisor.start_link(__MODULE__, @configuration, name: __MODULE__)
       end
@@ -172,8 +170,8 @@ defmodule ExAthena.IO do
           %{login_athena: [schema: LoginAthena, ...], ...}
 
       """
-      @spec configuration() :: configuration()
-      def configuration, do: @configuration
+      @spec configuration() :: %{optional(atom()) => keyword()}
+      def configuration(), do: @configuration
 
       @doc """
       Gets the item from configuration map and returns
@@ -194,7 +192,7 @@ defmodule ExAthena.IO do
       end
 
       @doc """
-      Reloads all item from given category that can be reladed.
+      Reloads all item from given category that can be reloaded.
 
       ## Examples
 
@@ -236,7 +234,7 @@ defmodule ExAthena.IO do
           category: category
         )
 
-        Enum.each(items, &Item.reload(&1))
+        Enum.each(items, &Item.reload(&1.name))
       end
     end
   end

@@ -19,7 +19,6 @@ defmodule ExAthena.Accounts.Ban do
 
   schema "bans" do
     field :banned_until, :utc_datetime
-
     belongs_to :user, User
 
     timestamps(updated_at: false)
@@ -37,7 +36,7 @@ defmodule ExAthena.Accounts.Ban do
       %Ecto.Changeset{valid?: false}
 
   """
-  def changeset(ban = %__MODULE__{}, attrs) do
+  def changeset(ban, attrs) do
     ban
     |> cast(attrs, @fields)
     |> validate_required(@fields)

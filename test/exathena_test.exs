@@ -1,12 +1,12 @@
 defmodule ExAthenaTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
 
   describe "now/1" do
     test "returns the datetime with default time zone (:utc)" do
       datetime = Timex.now()
       travel_to(datetime)
 
-      assert datetime == ExAthena.now()
+      assert ExAthena.now() == datetime
     end
 
     test "returns the datetime with given time zone" do
@@ -14,7 +14,7 @@ defmodule ExAthenaTest do
       datetime = Timex.now(timezone)
       travel_to(datetime)
 
-      assert datetime == ExAthena.now(timezone)
+      assert ExAthena.now(timezone) == datetime
     end
   end
 end

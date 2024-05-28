@@ -7,11 +7,18 @@ defmodule ExAthena.Database do
   """
   use ExAthena.IO
 
-  alias ExAthena.Database.{AtCommand, Group}
-
   configure :yaml do
-    item :atcommand_db, schema: AtCommand, name: AtCommandDb, category: :atcommand, reload?: true
-    item :player_group_db, schema: Group, name: PlayerGroupDb, category: :group, reload?: true
+    item :atcommand_db,
+      schema: ExAthena.Database.AtCommand,
+      name: AtCommandDb,
+      category: :atcommand,
+      reload?: true
+
+    item :player_group_db,
+      schema: ExAthena.Database.Group,
+      name: PlayerGroupDb,
+      category: :group,
+      reload?: true
   end
 
   @doc false

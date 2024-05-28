@@ -5,15 +5,13 @@ defmodule ExAthena.Config.SubnetAthena do
   use ExAthena, :schema
 
   @typedoc """
-  The Exathena `subnet_athena.conf` type.
+  The ExAthena `subnet_athena.conf` type.
   """
   @type t :: %__MODULE__{
           net_submark: String.t(),
           char_ip: String.t(),
           map_ip: String.t()
         }
-
-  @fields ~w(net_submark char_ip map_ip)a
 
   @primary_key false
   schema "subnet_athena.conf" do
@@ -36,7 +34,7 @@ defmodule ExAthena.Config.SubnetAthena do
   """
   def changeset(subnet_athena, attrs)
 
-  def changeset(subnet_athena = %__MODULE__{}, %{"subnet" => subnet}) do
+  def changeset(subnet_athena, %{"subnet" => subnet}) do
     [net_submark, char_ip, map_ip] = String.split(subnet, ":")
 
     attrs = %{
@@ -48,9 +46,9 @@ defmodule ExAthena.Config.SubnetAthena do
     changeset(subnet_athena, attrs)
   end
 
-  def changeset(subnet_athena = %__MODULE__{}, attrs) do
+  def changeset(subnet_athena, attrs) do
     subnet_athena
-    |> cast(attrs, @fields)
-    |> validate_required(@fields)
+    |> cast(attrs, [:net_submark, :char_ip, :map_ip])
+    |> validate_required([:net_submark, :char_ip, :map_ip])
   end
 end
