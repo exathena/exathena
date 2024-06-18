@@ -4,24 +4,13 @@ import Config
 config :exathena,
   settings_path: Path.expand(""),
   database_path: Path.expand(""),
-  events_module: ExAthenaEventsMock,
-  clock_module: ExAthena.ClockMock,
-  logger_adapter: ExAthenaLoggerMock
+  clock_module: ExAthena.ClockMock
 
 # Configure your databases
 config :exathena, ExAthena.Repo,
   username: "postgres",
   password: "postgres",
   database: "exathena_test",
-  hostname: "localhost",
-  log: false,
-  pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: 10
-
-config :exathena, ExAthenaLogger.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "exathena_logger_test",
   hostname: "localhost",
   log: false,
   pool: Ecto.Adapters.SQL.Sandbox,
