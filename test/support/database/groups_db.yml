@@ -1,84 +1,48 @@
-# Player groups configuration file
-# ---------------------------------
+# This file is a part of rAthena.
+#   Copyright(C) 2022 rAthena Development Team
+#   https://rathena.org - https://github.com/rathena
 #
-# This file defines "player groups" and their privileges.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# Each group has its id and name, lists of available commands and other
-# Permissions, and a list of other groups it inherits from.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 #
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
-# Group settings
-# --------------
-# <Id>
-# Unique group number. The only required field.
+###########################################################################
+# Player Group Database
+###########################################################################
 #
-# <Name>
-# Any string. If empty, defaults to "Group <id>". It is used in several @who
-# commands.
+# Player Group Settings
 #
-# <Role>
-# The name atom, with snake case. It is required and used in "users" table.
-# See more in "src/exathena/lib/exathena/accounts/user.ex".
-#
-# <Level>
-# Equivalent of GM level, which was used in revisions before r15572. You can
-# set it to any number, but usually it's between 0 (default) and 99. Members of
-# groups with lower level can not perform some actions/commands (like @kick) on
-# members of groups with higher level. It is what script command getgmlevel()
-# returns. Group level can also be used to override trade restrictions
-# (db/item_trade.txt).
-#
-# <Commands>
-# A group of settings
-# 	<command_name>: <bool>
-# or
-# 	<command_name>:
-# 	  - <bool>
-# 	  - <bool>
-# First boolean value is for atcommand, second one for charcommand. If set to
-# true, group can use command. If only atcommand value is provided, false is
-# assumed for charcommand. If a command name is not included, false is assumed for
-# both atcommand and charcommand.
-# For a full list of available commands, see: doc/atcommands.txt.
-# Command names must not be aliases.
-#
-# <LogCommands>
-# Boolean value. If true then all commands used by the group will be logged to
-# atcommandlog. If setting is omitted in a group definition, false is assumed.
-# Requires 'LogCommands' to be enabled in 'conf/log_athena.conf'.
-#
-# <Permissions>
-# A group of settings
-# 	<permission> : <bool>
-# If a permission is not included, false is assumed.
-# For a full list of available Permissions, see: doc/Permissions.txt
-#
-# <Inherit>
-# A list of group names that given group will inherit commands and Permissions
-# from. Group names are case-sensitive.
-#
-# Inheritance results
-# -------------------
-# Both multiple inheritance (Group 2 -> Group 1 and Group 3 -> Group 1) and
-# recursive inheritance (Group 3 -> Group 2 -> Group 1) are allowed.
-#
-# Inheritance rules should not create cycles (eg Group 1 inherits from Group 2,
-# and Group inherits from Group 1 at the same time). Configuration with cycles is
-# considered faulty and can't be processed fully by server.
-#
-# Command or permission is inherited ONLY if it's not already defined for the
-# group.
-# If group inherits from multiple groups, and the same command or permission is
-# defined for more than one of these groups, it's undefined which one will be
-# inherited.
+###########################################################################
+# - Id                    Group ID.
+#   Name                  Group name.
+#   Level                 GM Level used for ranking groups. (Default: 0)
+#   LogCommands           Whether atcommands should be logged or not. (Default: false)
+#   Commands:             List of atcommands that can be used by this group. (Default: none)
+#     <atcommand name>    Whether the specified atcommand can be used by this group or not.
+#   CharCommands:         List of charcommands that can be used by this group. (Default: none)
+#     <charcommand name>  Whether the specified charcommand can be used by this group or not.
+#   Permissions:          List of permissions the group has. (Default: none)
+#     <permission name>   Whether the group has this permission or not.
+#   Inherit:              List of groups that will be inherited. (Default: none)
+#     <group name>        Whether this group will be inherited or not.
+###########################################################################
 
 Header:
-  Type: GROUPS_DB
+  Type: PLAYER_GROUP_DB
   Version: 1
 
 Body:
-  # Group 0 is the default group for every new account
   - Id: 0
+    # group 0 is the default group for every new account
     Name: Player
     Role: player
     Level: 0
@@ -86,14 +50,15 @@ Body:
       changedress: true
       resurrect: true
     Permissions:
+      # without this basic permissions regular players could not trade or party
       can_trade: true
       can_party: true
       attendance: true
   - Id: 1
     Name: Super Player
     Role: super_player
+    # Can do everything Players can and more
     Inherit:
-      # Can do everything Players can and more
       - Player
     Level: 0
     Commands:
@@ -115,7 +80,6 @@ Body:
       showexp: true
       showzeny: true
       whereis: true
-
       # Feature commands
       refresh: true
       noask: true
@@ -184,21 +148,11 @@ Body:
       killmonster2: true
       cleanarea: true
       cleanmap: true
-      item:
-        - true
-        - true
-      zeny:
-        - true
-        - true
-      disguise:
-        - true
-        - true
-      undisguise:
-        - true
-        - true
-      size:
-        - true
-        - true
+      item: true
+      zeny: true
+      disguise: true
+      undisguise: true
+      size: true
       raise: true
       raisemap: true
       day: true
@@ -214,6 +168,12 @@ Body:
       marry: true
       divorce: true
       refreshall: true
+    CharCommands:
+      item: true
+      zeny: true
+      disguise: true
+      undisguise: true
+      size: true
     LogCommands: true
     Permissions:
       can_trade: false
@@ -221,15 +181,13 @@ Body:
   - Id: 5
     Name: VIP
     Role: vip
+    # Can do everything Players can
     Inherit:
-      # Can do everything Players can
       - Player
     Level: 0
     Commands:
       rates: true
       who: true
-    # No permissions by default
-    Permissions:
   - Id: 10
     Name: Law Enforcement
     Role: law_enforcement
@@ -272,8 +230,6 @@ Body:
     Inherit:
       - Support
       - Law Enforcement
-    # Not necessary due to all_commands: true
-    Commands:
     LogCommands: true
     Permissions:
       can_trade: true
@@ -290,8 +246,8 @@ Body:
       item_unconditional: false
       bypass_stat_onclone: true
       bypass_max_stat: true
-      # all_permission: true
+      #all_permission: true
 
 Footer:
   Imports:
-    - Path: settings/import/groups.yml
+  - Path: import/groups_db.yml

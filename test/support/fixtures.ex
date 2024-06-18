@@ -86,6 +86,14 @@ defmodule InvalidFormatConfig do
   end
 end
 
+defmodule InvalidPathConfig do
+  @moduledoc false
+  use ExAthena, :schema
+
+  schema "foo.conf" do
+  end
+end
+
 defmodule InvalidDatabase do
   use ExAthena.Database
 

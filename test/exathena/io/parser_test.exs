@@ -13,25 +13,31 @@ defmodule ExAthena.IO.ParserTest do
     end
 
     test "returns error when changeset is invalid" do
-      TemporaryEnv.put :exathena, :settings_path, "test/support" do
-        assert {:error, %Ecto.Changeset{valid?: false}} = Parser.load(:conf, InvalidConfig)
-      end
+      assert {:error, %Ecto.Changeset{valid?: false}} = Parser.load(:conf, InvalidConfig)
     end
 
     @tag capture_log: true
     test "returns error when file has invalid path" do
-      assert capture_log(fn ->
-               assert {:error, :invalid_path} = Parser.load(:conf, InvalidFormatConfig)
-             end) =~ "due to invalid_path"
+      log =
+        capture_log(fn ->
+          assert Parser.load(:conf, InvalidPathConfig) == {:error, :invalid_path}
+        end)
+
+      assert log =~ "Failed to parse"
+      assert log =~ "conf/foo.conf"
+      assert log =~ "due to invalid_path"
     end
 
     @tag capture_log: true
     test "returns error when file has invalid format" do
-      TemporaryEnv.put :exathena, :settings_path, "test/support" do
-        assert capture_log(fn ->
-                 assert {:error, :invalid_format} = Parser.load(:conf, InvalidFormatConfig)
-               end) =~ "due to invalid_format"
-      end
+      log =
+        capture_log(fn ->
+          assert Parser.load(:conf, InvalidFormatConfig) == {:error, :invalid_format}
+        end)
+
+      assert log =~ "Failed to parse"
+      assert log =~ "conf/partial_valid_config.conf"
+      assert log =~ "due to invalid_format at line 170"
     end
   end
 
@@ -41,25 +47,31 @@ defmodule ExAthena.IO.ParserTest do
     end
 
     test "returns error when changeset is invalid" do
-      TemporaryEnv.put :exathena, :database_path, "test/support" do
-        assert {:error, %Ecto.Changeset{valid?: false}} = Parser.load(:yaml, InvalidDatabase)
-      end
+      assert {:error, %Ecto.Changeset{valid?: false}} = Parser.load(:yaml, InvalidDatabase)
     end
 
     @tag capture_log: true
     test "returns error when file has invalid path" do
-      assert capture_log(fn ->
-               assert {:error, :invalid_path} = Parser.load(:yaml, InvalidPathDatabase)
-             end) =~ "The given YAML file doesn't not exist"
+      log =
+        capture_log(fn ->
+          assert Parser.load(:yaml, InvalidPathDatabase) == {:error, :invalid_path}
+        end)
+
+      assert log =~ "Failed to parse"
+      assert log =~ "database/foo.yml"
+      assert log =~ "due to invalid_path"
     end
 
     @tag capture_log: true
     test "returns error when file has invalid format" do
-      TemporaryEnv.put :exathena, :database_path, "test/support" do
-        assert capture_log(fn ->
-                 assert {:error, :invalid_format} = Parser.load(:yaml, InvalidFormatDatabase)
-               end) =~ "Failed to parse YAML file"
-      end
+      log =
+        capture_log(fn ->
+          assert Parser.load(:yaml, InvalidFormatDatabase) == {:error, :invalid_format}
+        end)
+
+      assert log =~ "Failed to parse"
+      assert log =~ "database/invalid_format.yml"
+      assert log =~ "due to invalid_format"
     end
   end
 end
