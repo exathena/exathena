@@ -13,47 +13,27 @@ defmodule ExAthena.Application do
         {Phoenix.PubSub, name: ExAthena.PubSub},
         ExAthenaWeb.Endpoint,
         ExAthena.Vault,
-        {Registry, keys: :unique, name: ExAthenaMmo.Registry},
-        {DynamicSupervisor, strategy: :one_for_one, name: ExAthenaMmo.Client},
-        {Oban, oban}
+        {Oban, oban},
       ] ++
-        logger_repo() ++
         start_configs() ++
-        start_databases()
-
-    :ok = start_handlers()
+        start_databases() ++
 
     opts = [strategy: :one_for_one, name: ExAthena.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
-  cond do
-    ExAthenaLogger.Sql in Application.compile_env(:exathena, :logger_adapters, []) ->
-      defp logger_repo, do: [ExAthenaLogger.Repo]
-
-    Mix.env() == :test ->
-      defp logger_repo, do: [ExAthenaLogger.Repo]
-
-    :else ->
-      defp logger_repo, do: []
-  end
-
   if Mix.env() == :test do
-    defp start_handlers, do: :ok
+    defp start_databases(), do: []
+    defp start_configs(), do: []
   else
-    defp start_handlers, do: ExAthenaLogger.start_handlers()
-  end
+    defp start_configs() do
+      [ExAthena.Config]
+    end
 
-  if Mix.env() == :test do
-    defp start_configs, do: []
-  else
-    defp start_configs, do: [ExAthena.Config]
-  end
+    defp start_databases() do
+      [ExAthena.Database]
+    end
 
-  if Mix.env() == :test do
-    defp start_databases, do: []
-  else
-    defp start_databases, do: [ExAthena.Database]
   end
 
   @impl true
