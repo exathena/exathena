@@ -1,5 +1,5 @@
 defmodule ExAthena.DatabaseTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
 
   alias ExAthena.Database
   alias ExAthena.Database.Group
@@ -25,7 +25,7 @@ defmodule ExAthena.DatabaseTest do
     end
 
     test "returns error when group doesn't exist" do
-      assert {:error, :not_found} = Database.get(PlayerGroupDb, -1)
+      assert Database.get(PlayerGroupDb, -1) == {:error, :not_found}
     end
   end
 
@@ -35,7 +35,7 @@ defmodule ExAthena.DatabaseTest do
     end
 
     test "returns error when group doesn't exist" do
-      assert {:error, :not_found} = Database.get_by(PlayerGroupDb, id: -1)
+      assert Database.get_by(PlayerGroupDb, id: -1) == {:error, :not_found}
     end
   end
 end
