@@ -10,17 +10,14 @@ defmodule ExAthena.IO.YamlParser do
 
   ## Examples
 
-      iex> parse_yaml(ExAthena.Database.Group)
+      iex> parse_yaml("/path/to/group_db.yml")
       {:ok, [%Group{id: 0, name: "Player", ...}]}
 
-      iex> parse_yaml(Foo)
+      iex> parse_yaml("/path/to/invalid.yml")
       {:error, :invalid_format}
 
-      iex> parse_yaml(Bar)
+      iex> parse_yaml("/invalid_path.yml")
       {:error, :invalid_path}
-
-      iex> parse_yaml(Baz)
-      {:error, :invalid_schema}
 
   """
   @spec parse_yaml(String.t()) ::
@@ -40,9 +37,6 @@ defmodule ExAthena.IO.YamlParser do
 
           exception = %YamlElixir.ParsingError{} ->
             {:invalid_format, Exception.message(exception)}
-
-          :invalid_format ->
-            {:invalid_format, :invalid_format}
         end
 
       ExAthena.IO.Parser.show_error(path, reason, detail)
@@ -74,5 +68,5 @@ defmodule ExAthena.IO.YamlParser do
     {:error, %YamlElixir.ParsingError{}}
   end
 
-  defp maybe_import_other_files(other), do: other
+  defp maybe_import_other_files({:error, %YamlElixir.FileNotFoundError{}} = error), do: error
 end
