@@ -43,12 +43,11 @@ defmodule ExAthena.IO.ConfParser do
     end
   end
 
-  defp check_file_existence(config_path) do
-    if File.exists?(config_path) do
+  defp check_file_existence(path) do
+    if File.exists?(path) do
       :ok
     else
-      Logger.error("Failed to parse #{config_path} due to invalid_path")
-
+      ExAthena.IO.Parser.show_error(path, :invalid_path, :invalid_path)
       {:error, :invalid_path}
     end
   end
@@ -63,9 +62,11 @@ defmodule ExAthena.IO.ConfParser do
   defp handle_result(%State{result: result = {:ok, _}}), do: result
 
   defp handle_result(state = %State{result: {:error, reason}}) do
-    Logger.error(
-      "Failed to parse #{state.file_name} due to #{reason} at line #{state.line_number}",
-      state: Map.from_struct(state)
+    ExAthena.IO.Parser.show_error(
+      state.file_name,
+      reason,
+      state.line_number,
+      Map.from_struct(state)
     )
 
     state.result

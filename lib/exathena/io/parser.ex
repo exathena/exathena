@@ -4,9 +4,8 @@ defmodule ExAthena.IO.Parser do
 
   It parses `.conf` and `yaml/yml` files recursively.
   """
-
-  alias Ecto.Changeset
-  alias ExAthena.IO.{ConfParser, YamlParser}
+  require Logger
+  alias ExAthena.IO
 
   @doc """
   Loads the data from given module based on given configuration type.
@@ -39,7 +38,7 @@ defmodule ExAthena.IO.Parser do
   def load(:conf, module) do
     config_path = module.__schema__(:source)
 
-    case ConfParser.parse_config(config_path) do
+    case IO.ConfParser.parse_config(config_path) do
       {:ok, attrs} -> build_schema(attrs, module)
       error = {:error, _} -> error
     end
@@ -48,10 +47,15 @@ defmodule ExAthena.IO.Parser do
   def load(:yaml, module) do
     yaml_path = module.__schema__(:source)
 
-    case YamlParser.parse_yaml(yaml_path) do
+    case IO.YamlParser.parse_yaml(yaml_path) do
       {:ok, list_of_attrs = [_ | _]} -> build_schemas(list_of_attrs, module)
       error = {:error, _} -> error
     end
+  end
+
+  def show_error(path, reason, line_number \\ nil, detail) do
+    reason = if line_number, do: "#{reason} at line #{line_number}", else: reason
+    Logger.error("Failed to parse #{path} due to #{reason}", error: true, error_detail: detail)
   end
 
   defp build_schemas(list_of_attrs = [_ | _], module) do
@@ -67,6 +71,6 @@ defmodule ExAthena.IO.Parser do
     module
     |> struct()
     |> module.changeset(attrs)
-    |> Changeset.apply_action(:parsed)
+    |> Ecto.Changeset.apply_action(:parsed)
   end
 end

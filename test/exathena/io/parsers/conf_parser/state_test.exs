@@ -1,5 +1,5 @@
 defmodule ExAthena.IO.ConfParser.StateTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
 
   alias ExAthena.IO.ConfParser.State
 
@@ -13,13 +13,13 @@ defmodule ExAthena.IO.ConfParser.StateTest do
       true_state = %State{result: {:ok, %{"key" => true}}}
       false_state = %State{result: {:ok, %{"key" => false}}}
 
-      assert true_state == State.define_config(%State{}, "key", "yes")
-      assert true_state == State.define_config(%State{}, "key", "true")
-      assert true_state == State.define_config(%State{}, "key", "on")
+      assert State.define_config(%State{}, "key", "yes") == true_state
+      assert State.define_config(%State{}, "key", "true") == true_state
+      assert State.define_config(%State{}, "key", "on") == true_state
 
-      assert false_state == State.define_config(%State{}, "key", "no")
-      assert false_state == State.define_config(%State{}, "key", "false")
-      assert false_state == State.define_config(%State{}, "key", "off")
+      assert State.define_config(%State{}, "key", "no") == false_state
+      assert State.define_config(%State{}, "key", "false") == false_state
+      assert State.define_config(%State{}, "key", "off") == false_state
     end
 
     test "defines a decimal value" do
@@ -43,15 +43,15 @@ defmodule ExAthena.IO.ConfParser.StateTest do
     end
 
     test "ignores the empty value" do
-      assert %State{} == State.define_config(%State{}, "foo", nil)
-      assert %State{} == State.define_config(%State{}, "foo", "")
+      assert State.define_config(%State{}, "foo", nil) == %State{}
+      assert State.define_config(%State{}, "foo", "") == %State{}
     end
 
     test "keeps the error even with valid operations" do
       invalid_state = %State{result: {:error, :reason}}
 
-      assert invalid_state == State.define_config(invalid_state, "foo", "bar")
-      assert invalid_state == State.define_config(invalid_state, "foo", "baz")
+      assert State.define_config(invalid_state, "foo", "bar") == invalid_state
+      assert State.define_config(invalid_state, "foo", "baz") == invalid_state
     end
   end
 end

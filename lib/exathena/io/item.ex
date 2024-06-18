@@ -8,30 +8,14 @@ defmodule ExAthena.IO.Item do
   """
   use GenServer
 
-  alias __MODULE__
-  alias ExAthena.IO.Parser
-
-  @typedoc """
-  The Configuration Item type
-  """
-  @type t :: %__MODULE__{
-          data: nil | Ecto.Schema.t(),
-          options: keyword()
-        }
-
-  defstruct [
-    # The file data
-    data: nil,
-    # The configuration options
-    options: []
-  ]
-
   @doc """
   Starts the configurtion item with given options
   """
   @spec start_link(keyword) :: GenServer.on_start()
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, %Item{options: opts}, name: opts[:name])
+    {name, opts} = Keyword.pop!(opts, :name)
+
+    GenServer.start_link(__MODULE__, opts, name: name)
   end
 
   @doc """
@@ -43,9 +27,9 @@ defmodule ExAthena.IO.Item do
       :ok
 
   """
-  @spec reload(module()) :: :ok
-  def reload(name) do
-    GenServer.call(name, :reload)
+  @spec reload(GenServer.server()) :: :ok | {:error, :invalid_path | :invalid_format}
+  def reload(server) do
+    GenServer.call(server, :reload)
   end
 
   @doc """
@@ -60,9 +44,9 @@ defmodule ExAthena.IO.Item do
       nil
 
   """
-  @spec get_data(module()) :: nil | Ecto.Schema.t()
-  def get_data(name) do
-    GenServer.call(name, :get_data)
+  @spec get_data(GenServer.server()) :: nil | Ecto.Schema.t()
+  def get_data(server) do
+    GenServer.call(server, :get_data)
   end
 
   @doc """
@@ -77,9 +61,9 @@ defmodule ExAthena.IO.Item do
       [%AtCommand{command: "Foo"}, ...]
 
   """
-  @spec list_all(module(), keyword()) :: list(Ecto.Schema.t())
-  def list_all(name, filters \\ []) do
-    GenServer.call(name, {:all, filters})
+  @spec list_all(GenServer.server(), keyword()) :: list(Ecto.Schema.t())
+  def list_all(server, filters \\ []) do
+    GenServer.call(server, {:all, filters})
   end
 
   @doc """
@@ -94,9 +78,9 @@ defmodule ExAthena.IO.Item do
       nil
 
   """
-  @spec get(module(), non_neg_integer()) :: nil | Ecto.Schema.t()
-  def get(name, id) do
-    GenServer.call(name, {:get, id})
+  @spec get(GenServer.server(), non_neg_integer()) :: nil | Ecto.Schema.t()
+  def get(server, id) do
+    GenServer.call(server, {:get, id})
   end
 
   @doc """
@@ -111,66 +95,72 @@ defmodule ExAthena.IO.Item do
       nil
 
   """
-  @spec get_by(module(), keyword()) :: nil | Ecto.Schema.t()
-  def get_by(name, filters) do
-    GenServer.call(name, {:get_by, filters})
+  @spec get_by(GenServer.server(), keyword()) :: nil | Ecto.Schema.t()
+  def get_by(server, filters) do
+    GenServer.call(server, {:get_by, filters})
   end
 
   ## GenServer Callbacks
 
   @impl true
-  def init(state = %Item{}) do
-    {:ok, state, {:continue, :load}}
+  def init(opts) do
+    {:ok, %{data: nil, options: opts}, {:continue, :load}}
   end
 
   @impl true
-  def handle_continue(:load, state = %Item{}) do
-    {:noreply, load_item_data!(state)}
+  def handle_continue(:load, state) do
+    case load_item_data(state) do
+      {:ok, state} -> {:noreply, state}
+      {:error, reason} -> {:stop, "Failed to load the data due to #{reason}", state}
+    end
   end
 
   @impl true
-  def handle_call(:reload, _from, state = %Item{}) do
-    {:reply, :ok, load_item_data!(state)}
+  def handle_call(:reload, _from, state) do
+    case load_item_data(state) do
+      {:ok, state} -> {:reply, :ok, state}
+      {:error, _} = error -> {:reply, error, state}
+    end
   end
 
-  def handle_call(:get_data, _from, state = %Item{}) do
+  def handle_call(:get_data, _from, state) do
     {:reply, state.data, state}
   end
 
-  def handle_call({:all, filters}, _from, state = %Item{}) do
+  def handle_call({:all, filters}, _from, state) do
     {:reply, do_list_all(state, filters), state}
   end
 
-  def handle_call({:get, id}, _from, state = %Item{}) do
+  def handle_call({:get, id}, _from, state) do
     {:reply, do_get(state, id), state}
   end
 
-  def handle_call({:get_by, filters}, _from, state = %Item{}) do
+  def handle_call({:get_by, filters}, _from, state) do
     {:reply, do_get_by(state, filters), state}
   end
 
   ## Private functions
 
-  defp do_list_all(%Item{data: items = [_ | _]}, filters) do
+  defp do_list_all(%{data: items = [_ | _]}, filters) do
     do_build_filter(items, filters, &Enum.filter/2)
   end
 
-  defp do_list_all(%Item{}, _), do: []
+  defp do_list_all(_, _), do: []
 
-  defp do_get(%Item{data: items = [_ | _]}, id) do
+  defp do_get(%{data: items = [_ | _]}, id) do
     Enum.find(items, fn item ->
       [{field, _}] = Ecto.primary_key(item)
       Map.get(item, field) == id
     end)
   end
 
-  defp do_get(%Item{}, _), do: nil
+  defp do_get(_, _), do: nil
 
-  defp do_get_by(%Item{data: items = [_ | _]}, filters) do
+  defp do_get_by(%{data: items = [_ | _]}, filters) do
     do_build_filter(items, filters, &Enum.find/2)
   end
 
-  defp do_get_by(%Item{}, _), do: nil
+  defp do_get_by(_, _), do: nil
 
   defp do_build_filter(items = [%module{} | _], filters, func) do
     fields = module.__schema__(:fields)
@@ -188,11 +178,12 @@ defmodule ExAthena.IO.Item do
     Map.get(item, field) == value
   end
 
-  defp load_item_data!(state = %Item{options: options}) do
+  defp load_item_data(state = %{options: options}) do
     type = Keyword.fetch!(options, :type)
     schema = Keyword.fetch!(options, :schema)
-    {:ok, data} = Parser.load(type, schema)
 
-    %{state | data: data}
+    with {:ok, data} <- ExAthena.IO.Parser.load(type, schema) do
+      {:ok, %{state | data: data}}
+    end
   end
 end

@@ -1,6 +1,5 @@
 defmodule ExAthena.IO.ConfParser.State do
   @moduledoc false
-  alias __MODULE__, as: State
 
   @true_boolean_words ~w(yes true on)
   @false_boolean_words ~w(no false off)
@@ -25,7 +24,7 @@ defmodule ExAthena.IO.ConfParser.State do
   @typedoc """
   The Parser State type
   """
-  @type t :: %State{
+  @type t :: %__MODULE__{
           file_name: String.t(),
           line_number: pos_integer(),
           imports: list(String.t()),
@@ -55,17 +54,17 @@ defmodule ExAthena.IO.ConfParser.State do
   @spec define_config(t(), key(), value()) :: t()
   def define_config(state, key, value)
 
-  def define_config(state = %State{result: {:error, _}}, _key, _value), do: state
+  def define_config(state = %__MODULE__{result: {:error, _}}, _key, _value), do: state
 
-  def define_config(state = %State{result: {:ok, _}}, _key, value)
+  def define_config(state = %__MODULE__{result: {:ok, _}}, _key, value)
       when is_nil(value) or value == "",
       do: state
 
-  def define_config(state = %State{imports: imports}, "import", path) do
+  def define_config(state = %__MODULE__{imports: imports}, "import", path) do
     %{state | imports: [path | imports]}
   end
 
-  def define_config(state = %State{result: {:ok, config}}, key, value) when is_binary(key) do
+  def define_config(state = %__MODULE__{result: {:ok, config}}, key, value) when is_binary(key) do
     new_config = Map.put_new(config, key, convert_value(value))
 
     %{state | result: {:ok, new_config}}

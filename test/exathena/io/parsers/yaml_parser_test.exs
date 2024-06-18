@@ -1,5 +1,5 @@
 defmodule ExAthena.IO.YamlParserTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
   @moduletag capture_log: true
 
   alias ExAthena.IO.YamlParser, as: Parser
@@ -8,30 +8,31 @@ defmodule ExAthena.IO.YamlParserTest do
   @invalid_path_db "foo.yml"
   @invalid_format_db "invalid_format.yml"
 
-  setup do
-    old_path = Application.get_env(:exathena, :database_path)
-    Application.put_env(:exathena, :database_path, "test/support")
-
-    on_exit(fn -> Application.put_env(:exathena, :database_path, old_path) end)
-
-    :ok
-  end
-
   describe "parse_yaml/1" do
     test "parses the YAML database from given module" do
       assert {:ok, [%{"Id" => 0, "Name" => "Player"} | _]} = Parser.parse_yaml(@group_db)
     end
 
     test "returns error when file doesn't exist" do
-      assert capture_log(fn ->
-               assert {:error, :invalid_path} == Parser.parse_yaml(@invalid_path_db)
-             end) =~ "The given YAML file doesn't not exist"
+      log =
+        capture_log(fn ->
+          assert Parser.parse_yaml(@invalid_path_db) == {:error, :invalid_path}
+        end)
+
+      assert log =~ "Failed to parse"
+      assert log =~ @invalid_path_db
+      assert log =~ "due to invalid_path"
     end
 
     test "returns error when file has invalid format" do
-      assert capture_log(fn ->
-               assert {:error, :invalid_format} == Parser.parse_yaml(@invalid_format_db)
-             end) =~ "Failed to parse YAML file"
+      log =
+        capture_log(fn ->
+          assert Parser.parse_yaml(@invalid_format_db) == {:error, :invalid_format}
+        end)
+
+      assert log =~ "Failed to parse"
+      assert log =~ @invalid_format_db
+      assert log =~ "due to invalid_format"
     end
   end
 end

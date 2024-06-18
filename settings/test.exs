@@ -47,3 +47,8 @@ config :pbkdf2_elixir, rounds: 1
 
 # Don't run Oban jobs on tests automatically
 config :exathena, Oban, testing: :manual
+
+# Configures the application
+config :exathena,
+  database_path: "test/support",
+  settings_path: "test/support"
