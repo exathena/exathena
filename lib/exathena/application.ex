@@ -29,17 +29,9 @@ defmodule ExAthena.Application do
     defp start_configs(), do: []
     defp start_servers(), do: []
   else
-    defp start_configs() do
-      [ExAthena.Config]
-    end
-
-    defp start_databases() do
-      [ExAthena.Database]
-    end
-
-    defp start_servers() do
-      [ExAthena.ServerSupervisor]
-    end
+    defp start_configs(), do: [ExAthena.Config]
+    defp start_databases(), do: [ExAthena.Database]
+    defp start_servers(), do: [ExAthena.ServerSupervisor]
   end
 
   @impl true
