@@ -14,9 +14,11 @@ defmodule ExAthena.Application do
         ExAthenaWeb.Endpoint,
         ExAthena.Vault,
         {Oban, oban},
+        {DynamicSupervisor, name: ExAthena.ServerDynamicSupervisor}
       ] ++
         start_configs() ++
         start_databases() ++
+        start_servers()
 
     opts = [strategy: :one_for_one, name: ExAthena.Supervisor]
     Supervisor.start_link(children, opts)
@@ -25,6 +27,7 @@ defmodule ExAthena.Application do
   if Mix.env() == :test do
     defp start_databases(), do: []
     defp start_configs(), do: []
+    defp start_servers(), do: []
   else
     defp start_configs() do
       [ExAthena.Config]
@@ -34,6 +37,9 @@ defmodule ExAthena.Application do
       [ExAthena.Database]
     end
 
+    defp start_servers() do
+      [ExAthena.ServerSupervisor]
+    end
   end
 
   @impl true
