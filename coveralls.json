@@ -12,7 +12,6 @@
     "lib/exathena/clock.ex",
     "lib/exathena/io/exceptions.ex",
     "lib/exathena/io/item.ex",
-    "lib/exathena_logger.ex",
     "lib/exathena_web.ex",
     "lib/exathena_web/router.ex",
     "lib/exathena_web/telemetry.ex",

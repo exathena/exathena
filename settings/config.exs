@@ -3,7 +3,7 @@ import Config
 # Configures the application
 config :exathena,
   namespace: ExAthena,
-  ecto_repos: [ExAthena.Repo, ExAthenaLogger.Repo]
+  ecto_repos: [ExAthena.Repo]
 
 # Configures the endpoint
 config :exathena, ExAthenaWeb.Endpoint,
@@ -15,7 +15,6 @@ config :exathena, ExAthenaWeb.Endpoint,
 
 # Configures the repos
 config :exathena, ExAthena.Repo, priv: "sql-files"
-config :exathena, ExAthenaLogger.Repo, priv: "sql-files/logs"
 
 # Configures the translation (getttext)
 config :exathena, ExAthenaWeb.Gettext,

@@ -3,20 +3,6 @@ defmodule ExAthenaWeb do
 
   def static_paths, do: ~w(assets fonts images robots.txt)
 
-  def socket do
-    quote do
-      use Phoenix.Socket
-    end
-  end
-
-  def channel do
-    quote do
-      use Phoenix.Channel
-
-      unquote(verified_routes())
-    end
-  end
-
   def controller do
     quote do
       use Phoenix.Controller,
