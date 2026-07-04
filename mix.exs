@@ -61,10 +61,10 @@ defmodule ExAthena.MixProject do
   defp deps do
     [
       # Phoenix Framework
-      {:phoenix, "~> 1.7.12"},
-      {:phoenix_ecto, "~> 4.6.1"},
+      {:phoenix, "~> 1.8.8"},
+      {:phoenix_ecto, "~> 4.7.0"},
       {:phoenix_live_dashboard, "~> 0.8.7"},
-      {:plug_cowboy, "~> 2.7.1"},
+      {:bandit, "~> 1.12"},
 
       # Database
       {:ecto_sql, "~> 3.14.0"},

@@ -7,6 +7,7 @@ config :exathena,
 
 # Configures the endpoint
 config :exathena, ExAthenaWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   url: [host: "localhost"],
   secret_key_base: "+fj/WbccwC8b3rS6rK2NPVcfM4xMZLQ24duQAqY0o2gXnfUdj28C0LE65ivCQSw4",
   render_errors: [view: ExAthenaWeb.ErrorView, accepts: ~w(json), layout: false],
