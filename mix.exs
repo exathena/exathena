@@ -86,7 +86,7 @@ defmodule ExAthena.MixProject do
       {:oban, "~> 2.17.10"},
 
       # Mailing
-      {:swoosh, "~> 1.16.7"},
+      {:swoosh, "~> 1.17.1"},
 
       # Telemetry
       {:telemetry_metrics, "~> 1.0.0"},
