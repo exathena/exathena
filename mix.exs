@@ -83,7 +83,7 @@ defmodule ExAthena.MixProject do
       {:pbkdf2_elixir, "~> 2.2.0"},
 
       # Background jobs
-      {:oban, "~> 2.17.10"},
+      {:oban, "~> 2.18.3"},
 
       # Mailing
       {:swoosh, "~> 1.16.7"},
