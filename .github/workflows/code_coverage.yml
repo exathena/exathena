@@ -1,4 +1,4 @@
-name: code coverage
+name: continuous integration
 
 on:
   push:
@@ -10,8 +10,8 @@ env:
   MIX_ENV: test
 
 jobs:
-  test:
-    name: Run CI and publish code coverage
+  linux:
+    name: Test changes on main
     runs-on: ubuntu-latest
 
     services:
@@ -57,13 +57,5 @@ jobs:
     - name: Compile
       run: mix compile --warnings-as-errors
 
-    - name: Run tests & code coverage
-      run: mix coveralls.json
-
-    - name: Upload code coverage
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      run: |
-        curl -Os https://uploader.codecov.io/latest/linux/codecov
-        chmod +x codecov
-        ./codecov
+    - name: Run tests
+      run: mix test --warnings-as-errors
