@@ -19,7 +19,7 @@
       elixir-ls = pkgs.beam28Packages.elixir-ls.override {inherit elixir;};
 
       libraries = with pkgs; [pkg-config];
-      packages = with pkgs; [elixir elixir-ls erlang openssl];
+      packages = with pkgs; [elixir elixir-ls erlang tailwindcss-language-server openssl];
     in {
       devShells.default = pkgs.mkShell {
         buildInputs = packages;
