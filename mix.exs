@@ -93,7 +93,7 @@ defmodule ExAthena.MixProject do
       {:telemetry_poller, "~> 1.1.0"},
 
       # Peer data
-      {:remote_ip, "~> 1.1.0"},
+      {:remote_ip, "~> 1.2.0"},
 
       # Internationalization
       {:gettext, "~> 0.24.0"},
