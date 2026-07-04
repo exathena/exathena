@@ -6,7 +6,7 @@ defmodule ExAthena.MixProject do
       app: :exathena,
       version: "0.1.0",
       config_path: "settings/config.exs",
-      elixir: "~> 1.16",
+      elixir: "~> 1.20",
       elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -61,7 +61,7 @@ defmodule ExAthena.MixProject do
         name: "exathena",
         maintainers: [~s(Alexandre "aleDsz" de Souza)],
         licenses: ["GNU General Public License v3.0"],
-        links: %{"Github" => "https://github.com/supaMOBA/exathena"}
+        links: %{"Github" => "https://github.com/exathena/exathena"}
       ]
     ]
   end

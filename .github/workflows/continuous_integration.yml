@@ -5,9 +5,9 @@ on:
     branches: [ main ]
 
 env:
-  ELIXIR_VERSION: 1.16.2
-  ASDF_ELIXIR_VERSION: 1.16.2-otp-26
-  OTP_VERSION: 26.2.3
+  ELIXIR_VERSION: 1.20.2
+  ASDF_ELIXIR_VERSION: 1.20.2-otp-28
+  OTP_VERSION: 28.5.0.3
   MIX_ENV: test
 
 jobs:
