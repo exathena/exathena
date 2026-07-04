@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.6
--- Dumped by pg_dump version 13.6
+-- Dumped from database version 13.8
+-- Dumped by pg_dump version 13.8
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -29,29 +29,6 @@ CREATE TYPE public.oban_job_state AS ENUM (
     'discarded',
     'cancelled'
 );
-
-
---
--- Name: oban_jobs_notify(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.oban_jobs_notify() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-  channel text;
-  notice json;
-BEGIN
-  IF NEW.state = 'available' THEN
-    channel = 'public.oban_insert';
-    notice = json_build_object('queue', NEW.queue);
-
-    PERFORM pg_notify(channel, notice::text);
-  END IF;
-
-  RETURN NULL;
-END;
-$$;
 
 
 SET default_tablespace = '';
@@ -114,7 +91,6 @@ CREATE TABLE public.oban_jobs (
     cancelled_at timestamp without time zone,
     CONSTRAINT attempt_range CHECK (((attempt >= 0) AND (attempt <= max_attempts))),
     CONSTRAINT positive_max_attempts CHECK ((max_attempts > 0)),
-    CONSTRAINT priority_range CHECK (((priority >= 0) AND (priority <= 3))),
     CONSTRAINT queue_length CHECK (((char_length(queue) > 0) AND (char_length(queue) < 128))),
     CONSTRAINT worker_length CHECK (((char_length(worker) > 0) AND (char_length(worker) < 128)))
 );
@@ -124,7 +100,7 @@ CREATE TABLE public.oban_jobs (
 -- Name: TABLE oban_jobs; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON TABLE public.oban_jobs IS '11';
+COMMENT ON TABLE public.oban_jobs IS '12';
 
 
 --
@@ -279,6 +255,14 @@ ALTER TABLE ONLY public.bans
 
 
 --
+-- Name: oban_jobs non_negative_priority; Type: CHECK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE public.oban_jobs
+    ADD CONSTRAINT non_negative_priority CHECK ((priority >= 0)) NOT VALID;
+
+
+--
 -- Name: oban_jobs oban_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -365,13 +349,6 @@ CREATE UNIQUE INDEX users_encrypted_email_index ON public.users USING btree (enc
 --
 
 CREATE UNIQUE INDEX users_username_index ON public.users USING btree (username);
-
-
---
--- Name: oban_jobs oban_notify; Type: TRIGGER; Schema: public; Owner: -
---
-
-CREATE TRIGGER oban_notify AFTER INSERT ON public.oban_jobs FOR EACH ROW EXECUTE FUNCTION public.oban_jobs_notify();
 
 
 --

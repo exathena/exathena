@@ -1,5 +1,5 @@
 defmodule ExAthena.IOTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
 
   alias ExAthena.Config
   alias ExAthena.IO.{InvalidOptionError, InvalidTypeError}

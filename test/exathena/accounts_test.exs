@@ -1,10 +1,29 @@
 defmodule ExAthena.AccountsTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: false
   @moduletag capture_log: true
 
   alias ExAthena.Accounts
   alias ExAthena.Accounts.User
   alias ExAthena.{Config, Database}
+
+  setup tags do
+    case tags[:start_servers] do
+      :all ->
+        start_supervised(Config)
+        start_supervised(Database)
+
+      :config ->
+        start_supervised(Config)
+
+      :database ->
+        start_supervised(Database)
+
+      _ ->
+        :noop
+    end
+
+    :ok
+  end
 
   describe "get_user!/1" do
     test "throws an exception when user doesn't exist" do
@@ -19,7 +38,7 @@ defmodule ExAthena.AccountsTest do
 
   describe "get_user/1" do
     test "returns an error when user doesn't exist" do
-      assert {:error, :not_found} == Accounts.get_user(123)
+      assert Accounts.get_user(123) == {:error, :not_found}
     end
 
     test "returns an existing user" do
@@ -30,7 +49,7 @@ defmodule ExAthena.AccountsTest do
 
   describe "get_user_by_username/1" do
     test "returns an error when user doesn't exist" do
-      assert {:error, :not_found} == Accounts.get_user_by_username("username")
+      assert Accounts.get_user_by_username("username") == {:error, :not_found}
     end
 
     test "returns an existing user" do
@@ -84,57 +103,48 @@ defmodule ExAthena.AccountsTest do
       password = "123456789"
       user = insert(:user, password: Pbkdf2.hash_pwd_salt(password))
 
-      assert :ok == Accounts.authenticate_user(user, password)
+      assert Accounts.authenticate_user(user, password) == :ok
     end
 
     test "authenticates server user with credentials are valid" do
       password = "123456789"
       user = insert(:user, account_type: :server, password: Pbkdf2.hash_pwd_salt(password))
 
-      assert :ok == Accounts.authenticate_user(user, password)
+      assert Accounts.authenticate_user(user, password) == :ok
     end
 
     test "returns error with invalid credentials" do
       user = insert(:user)
 
-      assert {:error, :invalid_credentials} = Accounts.authenticate_user(user, "123456789")
+      assert Accounts.authenticate_user(user, "123456789") == {:error, :invalid_credentials}
     end
   end
 
   describe "authorize_user/1" do
-    setup tags do
-      if tags[:start_servers] do
-        start_supervised!(Config)
-        start_supervised!(Database)
-      end
-
-      :ok
-    end
-
-    @tag :start_servers
+    @tag start_servers: :all
     test "authorizes user when user isn't banned" do
       travel_to(Timex.now())
 
       user = insert(:user)
-      assert :ok == Accounts.authorize_user(user)
+      assert Accounts.authorize_user(user) == :ok
     end
 
-    @tag :start_servers
+    @tag start_servers: :all
     test "authorizes server user when user isn't banned" do
       travel_to(Timex.now())
 
       user = insert(:user, account_type: :server)
-      assert :ok == Accounts.authorize_user(user)
+      assert Accounts.authorize_user(user) == :ok
     end
 
-    @tag :start_servers
+    @tag start_servers: :all
     test "returns error with user banned" do
       user = insert(:user)
       banned_until = insert(:ban, user: user).banned_until
 
       travel_to(Timex.now())
 
-      assert {:error, :user_banned, banned_until} == Accounts.authorize_user(user)
+      assert Accounts.authorize_user(user) == {:error, :user_banned, banned_until}
     end
   end
 
@@ -143,7 +153,7 @@ defmodule ExAthena.AccountsTest do
       travel_to(Timex.now())
 
       user = insert(:user)
-      assert :ok == Accounts.check_user_ban(user)
+      assert Accounts.check_user_ban(user) == :ok
     end
 
     test "checks user ban and return ok when he was banned" do
@@ -152,7 +162,7 @@ defmodule ExAthena.AccountsTest do
 
       travel_to(Timex.shift(banned_until, seconds: 1))
 
-      assert :ok == Accounts.check_user_ban(user)
+      assert Accounts.check_user_ban(user) == :ok
     end
 
     test "returns error with user banned" do
@@ -166,63 +176,55 @@ defmodule ExAthena.AccountsTest do
   end
 
   describe "check_user_role/1" do
+    @tag start_servers: :all
     test "checks user role and return ok" do
-      start_supervised!(Config)
-      start_supervised!(Database)
-
       user = insert(:user)
-      assert :ok == Accounts.check_user_role(user)
+      assert Accounts.check_user_role(user) == :ok
     end
 
+    @tag start_servers: :all
     test "returns unauthorized if his role isn't allowed" do
-      start_supervised!(Config)
-      start_supervised!(Database)
-
       user = insert(:user)
 
       :sys.replace_state(LoginAthenaConfig, fn state ->
         %{state | data: %{state.data | min_group_id_to_connect: 1}}
       end)
 
-      assert {:error, :unauthorized} == Accounts.check_user_role(user)
+      assert Accounts.check_user_role(user) == {:error, :unauthorized}
 
       :sys.replace_state(LoginAthenaConfig, fn state ->
         %{state | data: %{state.data | min_group_id_to_connect: -1, group_id_to_connect: 5}}
       end)
 
-      assert {:error, :unauthorized} == Accounts.check_user_role(user)
+      assert Accounts.check_user_role(user) == {:error, :unauthorized}
     end
 
+    @tag start_servers: :database
     test "returns error with login_athena isn't available yet" do
-      start_supervised!(Database)
-
       user = insert(:user)
-      assert {:error, :internal_server_error} == Accounts.check_user_role(user)
+      assert Accounts.check_user_role(user) == {:error, :internal_server_error}
     end
 
+    @tag start_servers: :config
     test "returns error with groups_db isn't available yet" do
-      start_supervised!(Config)
-
       :sys.replace_state(LoginAthenaConfig, fn state ->
         %{state | data: %{state.data | min_group_id_to_connect: 1}}
       end)
 
       user = insert(:user)
-      assert {:error, :internal_server_error} == Accounts.check_user_role(user)
+      assert Accounts.check_user_role(user) == {:error, :internal_server_error}
     end
   end
 
   describe "check_user_expiration_date/1" do
+    @tag start_servers: :config
     test "returns success when server isn't configured with user's expiration date" do
-      start_supervised!(Config)
-
       user = insert(:user)
-      assert :ok == Accounts.check_user_expiration_date(user)
+      assert Accounts.check_user_expiration_date(user) == :ok
     end
 
+    @tag start_servers: :config
     test "returns success when current datetime is between subscription until datetime" do
-      start_supervised!(Config)
-
       user = insert(:user)
       until = insert(:subscription, user: user).until
       travel_to(Timex.shift(until, days: -1))
@@ -231,12 +233,11 @@ defmodule ExAthena.AccountsTest do
         %{state | data: %{state.data | start_limited_time: 1}}
       end)
 
-      assert :ok == Accounts.check_user_expiration_date(user)
+      assert Accounts.check_user_expiration_date(user) == :ok
     end
 
+    @tag start_servers: :config
     test "returns access expired if current datetime is greater than subscription until datetime" do
-      start_supervised!(Config)
-
       user = insert(:user)
       until = insert(:subscription, user: user).until
       travel_to(Timex.shift(until, seconds: 1))
@@ -245,12 +246,12 @@ defmodule ExAthena.AccountsTest do
         %{state | data: %{state.data | start_limited_time: 1}}
       end)
 
-      assert {:error, :access_expired} == Accounts.check_user_expiration_date(user)
+      assert Accounts.check_user_expiration_date(user) == {:error, :access_expired}
     end
 
     test "returns error with login_athena isn't available yet" do
       user = insert(:user)
-      assert {:error, :internal_server_error} == Accounts.check_user_expiration_date(user)
+      assert Accounts.check_user_expiration_date(user) == {:error, :internal_server_error}
     end
   end
 end

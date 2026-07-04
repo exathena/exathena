@@ -125,12 +125,12 @@ defmodule ExAthena.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup"],
-      "ecto.setup": ["ecto.create", "exathena.load", "run sql-files/seeds.exs"],
+      "ecto.setup": ["ecto.create", "ecto.load", "run sql-files/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "ecto.migrate": ["ecto.migrate", "ecto.dump"],
       "ecto.rollback": ["ecto.rollback", "ecto.dump"],
       sobelow: ["sobelow"],
-      test: ["ecto.drop -q", "ecto.create -q", "exathena.load -q", "test"]
+      test: ["ecto.drop -q", "ecto.create -q", "ecto.load -q", "test"]
     ]
   end
 end
