@@ -96,7 +96,7 @@ defmodule ExAthena.MixProject do
       {:remote_ip, "~> 1.1.0"},
 
       # Internationalization
-      {:gettext, "~> 0.24.0"},
+      {:gettext, "~> 0.26.1"},
       {:timex, "~> 3.7.11"},
 
       # File types
