@@ -2,7 +2,6 @@ defmodule ExAthena.IO.YamlParser do
   @moduledoc """
   The ExAthena Database YAML parser.
   """
-  require Logger
 
   @doc """
   Parses the YAML database from given schema

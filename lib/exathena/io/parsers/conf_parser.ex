@@ -2,8 +2,6 @@ defmodule ExAthena.IO.ConfParser do
   @moduledoc """
   The ExAthena `.conf` parser.
   """
-  require Logger
-
   alias ExAthena.IO.ConfParser.State
 
   @double_slash_comment_regex ~r{^\/\/.*}
