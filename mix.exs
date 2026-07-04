@@ -79,7 +79,7 @@ defmodule ExAthena.MixProject do
       {:postgrex, ">= 0.0.0"},
 
       # Encryption
-      {:cloak_ecto, "~> 1.2.0"},
+      {:cloak_ecto, "~> 1.3.0"},
       {:pbkdf2_elixir, "~> 2.2.0"},
 
       # Background jobs
