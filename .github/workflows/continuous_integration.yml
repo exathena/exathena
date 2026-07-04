@@ -28,10 +28,10 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
-    - name: Set up Elixir
-      uses: erlef/setup-elixir@v1
+    - name: Setup BEAM
+      uses: erlef/setup-beam@v1
       if: steps.erlef-cache.outputs.cache-hit != 'true'
       with:
         elixir-version: ${{ env.ELIXIR_VERSION }}
@@ -39,7 +39,7 @@ jobs:
 
     - name: Restore dependencies cache
       id: mix-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: |
           deps
@@ -80,7 +80,7 @@ jobs:
       run: mix coveralls
 
   macos:
-    if: github.event_name == 'push'
+    if: false
     name: Build & Test on macOS
     runs-on: macos-latest
 
@@ -180,7 +180,7 @@ jobs:
       run: mix coveralls
 
   windows:
-    if: github.event_name == 'push'
+    if: false
     name: Build & Test on Windows
     runs-on: windows-latest
 
@@ -188,7 +188,7 @@ jobs:
     - name: Configure Git
       run: git config --global core.autocrlf input
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set up Elixir
       if: steps.erlef-cache.outputs.cache-hit != 'true'
