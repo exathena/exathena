@@ -1,5 +1,5 @@
 %{
-  "assertions": {:hex, :assertions, "0.19.0", "f177fcc22b55df6a41a58b151e430d189d0a1083dae3240522503dedaf8e1174", [:mix], [], "hexpm", "759bdbf977fe3e2d2b79f8a65d8674f29ac757781136a6cb4adf88f1574af1d8"},
+  "assertions": {:hex, :assertions, "0.20.1", "e6bfcefbf199bc760d273d5a204ad9ef8a4f6c2b4725fc51d10610d73062e57b", [:mix], [], "hexpm", "848284fbde52f752232d73b8f77060ad191e1a98c177873c4b8dc56c4958defd"},
   "bunt": {:hex, :bunt, "1.0.0", "081c2c665f086849e6d57900292b3a161727ab40431219529f13c4ddcf3e7a44", [:mix], [], "hexpm", "dc5f86aa08a5f6fa6b8096f0735c4e76d54ae5c9fa2c143e5a1fc7c1cd9bb6b5"},
   "bypass": {:hex, :bypass, "2.1.0", "909782781bf8e20ee86a9cabde36b259d44af8b9f38756173e8f5e2e1fabb9b1", [:mix], [{:plug, "~> 1.7", [hex: :plug, repo: "hexpm", optional: false]}, {:plug_cowboy, "~> 2.0", [hex: :plug_cowboy, repo: "hexpm", optional: false]}, {:ranch, "~> 1.3", [hex: :ranch, repo: "hexpm", optional: false]}], "hexpm", "d9b5df8fa5b7a6efa08384e9bbecfe4ce61c77d28a4282f79e02f1ef78d96b80"},
   "castore": {:hex, :castore, "1.0.7", "b651241514e5f6956028147fe6637f7ac13802537e895a724f90bf3e36ddd1dd", [:mix], [], "hexpm", "da7785a4b0d2a021cd1292a60875a784b6caef71e76bf4917bdee1f390455cf5"},
