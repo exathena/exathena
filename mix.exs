@@ -63,53 +63,52 @@ defmodule ExAthena.MixProject do
       # Phoenix Framework
       {:phoenix, "~> 1.7.12"},
       {:phoenix_ecto, "~> 4.6.1"},
-      {:phoenix_live_dashboard, "~> 0.8.3"},
+      {:phoenix_live_dashboard, "~> 0.8.7"},
       {:plug_cowboy, "~> 2.7.1"},
 
       # Database
-      {:ecto_sql, "~> 3.11.2"},
+      {:ecto_sql, "~> 3.14.0"},
       {:postgrex, ">= 0.0.0"},
 
       # Encryption
-      {:cloak_ecto, "~> 1.2.0"},
-      {:pbkdf2_elixir, "~> 2.2.0"},
+      {:cloak_ecto, "~> 1.3.0"},
+      {:pbkdf2_elixir, "~> 2.3.1"},
 
       # Background jobs
-      {:oban, "~> 2.17.10"},
+      {:oban, "~> 2.23.0"},
 
       # Mailing
-      {:swoosh, "~> 1.16.7"},
+      {:swoosh, "~> 1.26.2"},
 
       # Telemetry
-      {:telemetry_metrics, "~> 1.0.0"},
-      {:telemetry_poller, "~> 1.1.0"},
+      {:telemetry_metrics, "~> 1.1.0"},
+      {:telemetry_poller, "~> 1.3.0"},
 
       # Peer data
-      {:remote_ip, "~> 1.1.0"},
+      {:remote_ip, "~> 1.2.0"},
 
       # Internationalization
-      {:gettext, "~> 0.24.0"},
-      {:timex, "~> 3.7.11"},
+      {:gettext, "~> 0.26.2"},
+      {:timex, "~> 3.7.13", override: true},
 
       # File types
       {:jason, "~> 1.4.1"},
-      {:yaml_elixir, "~> 2.9.0"},
+      {:yaml_elixir, "~> 2.12.2"},
 
       # Code quality & Security
-      {:credo, "~> 1.7.6", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4.3", only: [:dev, :test], runtime: false},
-      {:sobelow, "~> 0.13.0", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7.19", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4.7", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.14.1", only: [:dev, :test], runtime: false},
 
       # Docs
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
 
       # Test
       {:temporary_env, "~> 2.0.1", only: :test},
-      {:mox, "~> 1.1.0", only: [:dev, :test]},
-      {:assertions, "~> 0.19.0", only: :test},
-      {:bypass, "~> 2.1.0", only: :test},
-      {:ex_machina, "~> 2.7.0", only: [:dev, :test]},
-      {:faker, "~> 0.18.0", only: [:dev, :test]}
+      {:mox, "~> 1.2.0", only: [:dev, :test]},
+      {:assertions, "~> 0.22.0", only: :test},
+      {:ex_machina, "~> 2.8.0", only: [:dev, :test]},
+      {:faker, "~> 0.19.0", only: [:dev, :test]}
     ]
   end
 
@@ -118,8 +117,8 @@ defmodule ExAthena.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "exathena.load", "run sql-files/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "ecto.migrate": ["ecto.migrate", "ecto.dump"],
-      "ecto.rollback": ["ecto.rollback", "ecto.dump"],
+      "ecto.migrate": ["ecto.migrate", "exathena.dump"],
+      "ecto.rollback": ["ecto.rollback", "exathena.dump"],
       sobelow: ["sobelow"],
       test: ["ecto.drop -q", "ecto.create -q", "exathena.load -q", "test"]
     ]
