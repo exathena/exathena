@@ -75,7 +75,7 @@ defmodule ExAthena.MixProject do
       {:plug_cowboy, "~> 2.7.1"},
 
       # Database
-      {:ecto_sql, "~> 3.11.2"},
+      {:ecto_sql, "~> 3.12.0"},
       {:postgrex, ">= 0.0.0"},
 
       # Encryption
