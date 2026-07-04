@@ -101,7 +101,7 @@ defmodule ExAthena.MixProject do
 
       # File types
       {:jason, "~> 1.4.1"},
-      {:yaml_elixir, "~> 2.9.0"},
+      {:yaml_elixir, "~> 2.11.0"},
 
       # Code quality & Security
       {:credo, "~> 1.7.6", only: [:dev, :test], runtime: false},
