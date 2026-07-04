@@ -1,3 +1,3 @@
 [
-	{"lib/exathena.ex", :exact_eq},
+  {"lib/exathena.ex", :exact_eq}
 ]

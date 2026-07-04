@@ -12,8 +12,13 @@ locals_without_parens = [
 ]
 
 [
-  import_deps: [:ecto, :phoenix, :mox],
-  inputs: ["{mix,.formatter}.exs", "sql-files/seeds.exs", "{lib,test,config}/**/*.{ex,exs}"],
-  subdirectories: ["sql-files/*"],
+  import_deps: [:ecto, :ecto_sql, :phoenix, :mox],
+  subdirectories: ["sql-files/**/*/migrations"],
+  plugins: [Phoenix.LiveView.HTMLFormatter],
+  inputs: [
+    "*.{heex,ex,exs}",
+    "{settings,lib,test,}/**/*.{heex,ex,exs}",
+    "sql-files/**/*/seeds.exs"
+  ],
   locals_without_parens: locals_without_parens
 ]

@@ -9,7 +9,10 @@ defmodule ExAthenaLogger.Console.AuthenticationLogger do
     "Received request authentication from ip #{ip}"
   end
 
-  def get_log_message(%{socket: %Phoenix.Socket{assigns: %{ip: ip}}, result: :invalid_credentials}) do
+  def get_log_message(%{
+        socket: %Phoenix.Socket{assigns: %{ip: ip}},
+        result: :invalid_credentials
+      }) do
     "Connection refused from ip #{ip} due to invalid credentials"
   end
 
