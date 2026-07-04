@@ -8,14 +8,6 @@ defmodule ExAthena.MixProject do
       config_path: "settings/config.exs",
       elixir: "~> 1.20",
       elixirc_paths: elixirc_paths(Mix.env()),
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        dialyzer: :dev,
-        coveralls: :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test
-      ],
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -117,8 +109,7 @@ defmodule ExAthena.MixProject do
       {:assertions, "~> 0.19.0", only: :test},
       {:bypass, "~> 2.1.0", only: :test},
       {:ex_machina, "~> 2.7.0", only: [:dev, :test]},
-      {:faker, "~> 0.18.0", only: [:dev, :test]},
-      {:excoveralls, "~> 0.18.1", only: :test, runtime: false}
+      {:faker, "~> 0.18.0", only: [:dev, :test]}
     ]
   end
 
