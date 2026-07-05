@@ -23,32 +23,53 @@ defmodule ExAthenaWeb.Telemetry do
   def metrics do
     [
       # Phoenix Metrics
+      summary("phoenix.endpoint.start.system_time",
+        unit: {:native, :millisecond}
+      ),
       summary("phoenix.endpoint.stop.duration",
+        unit: {:native, :millisecond}
+      ),
+      summary("phoenix.router_dispatch.start.system_time",
+        tags: [:route],
+        unit: {:native, :millisecond}
+      ),
+      summary("phoenix.router_dispatch.exception.duration",
+        tags: [:route],
         unit: {:native, :millisecond}
       ),
       summary("phoenix.router_dispatch.stop.duration",
         tags: [:route],
         unit: {:native, :millisecond}
       ),
+      summary("phoenix.socket_connected.duration",
+        unit: {:native, :millisecond}
+      ),
+      summary("phoenix.channel_join.duration",
+        unit: {:native, :millisecond}
+      ),
+      summary("phoenix.channel_handled_in.duration",
+        tags: [:event],
+        unit: {:native, :millisecond}
+      ),
 
       # Database Metrics
-      summary("exathena.repo.query.total_time",
+      summary("teams.repo.query.total_time",
         unit: {:native, :millisecond},
         description: "The sum of the other measurements"
       ),
-      summary("exathena.repo.query.decode_time",
+      summary("teams.repo.query.decode_time",
         unit: {:native, :millisecond},
         description: "The time spent decoding the data received from the database"
       ),
-      summary("exathena.repo.query.query_time",
+      summary("teams.repo.query.query_time",
         unit: {:native, :millisecond},
         description: "The time spent executing the query"
       ),
-      summary("exathena.repo.query.queue_time",
+      summary("teams.repo.query.queue_time",
         unit: {:native, :millisecond},
         description: "The time spent waiting for a database connection"
       ),
-      summary("exathena.repo.query.idle_time",
+      summary("teams.repo.query.idle_time",
         unit: {:native, :millisecond},
         description:
           "The time the connection spent waiting before being checked out for the query"
