@@ -20,30 +20,15 @@ defmodule ExAthena.Config.SubnetAthena do
     field :map_ip, :string, default: "127.0.0.1"
   end
 
-  @doc """
-  Generates the changeset for a given subnet athena.
-
-  ## Examples
-
-      iex> SubnetAthena.changeset(%SubnetAthena{}, valid_attrs)
-      %Ecto.Changeset{valid?: true}
-
-      iex> SubnetAthena.changeset(%SubnetAthena{}, %{})
-      %Ecto.Changeset{valid?: false}
-
-  """
-  def changeset(subnet_athena, attrs)
-
+  @doc false
   def changeset(subnet_athena, %{"subnet" => subnet}) do
     [net_submark, char_ip, map_ip] = String.split(subnet, ":")
 
-    attrs = %{
+    changeset(subnet_athena, %{
       net_submark: net_submark,
       char_ip: char_ip,
       map_ip: map_ip
-    }
-
-    changeset(subnet_athena, attrs)
+    })
   end
 
   def changeset(subnet_athena, attrs) do

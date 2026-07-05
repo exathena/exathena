@@ -33,18 +33,7 @@ defmodule ExAthenaLogger.Sql.AuthenticationLog do
     timestamps(updated_at: false)
   end
 
-  @doc """
-  Generates the changeset for a given authentication log.
-
-  ## Examples
-
-      iex> AuthenticationLog.changeset(%AuthenticationLog{}, valid_attrs)
-      %Ecto.Changeset{valid?: true}
-
-      iex> AuthenticationLog.changeset(%AuthenticationLog{}, %{})
-      %Ecto.Changeset{valid?: false}
-
-  """
+  @doc false
   def changeset(authentication_log, attrs) do
     authentication_log
     |> cast(attrs, [:user_id, :join_ref, :ip, :message, :metadata])

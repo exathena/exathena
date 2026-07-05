@@ -22,18 +22,7 @@ defmodule ExAthena.Accounts.Subscription do
     timestamps(updated_at: false)
   end
 
-  @doc """
-  Generates the changeset for a given subscription.
-
-  ## Examples
-
-      iex> Subscription.changeset(%Subscription{}, %{user_id: 1, until: ~U[2024-02-01 00:00:00Z])
-      %Ecto.Changeset{valid?: true}
-
-      iex> User.changeset(%Subscription{}, %{})
-      %Ecto.Changeset{valid?: false}
-
-  """
+  @doc false
   def changeset(subscription, attrs) do
     subscription
     |> cast(attrs, [:user_id, :until])

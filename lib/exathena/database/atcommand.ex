@@ -19,22 +19,7 @@ defmodule ExAthena.Database.AtCommand do
     field :help, :string, source: :Help
   end
 
-  @doc """
-  Generates the changeset for a given @command (atcommand).
-
-  ## Examples
-
-      iex> AtCommand.changeset(%AtCommand{}, %{
-      ...>  command: "foo",
-      ...>  aliases: ["bar"],
-      ...>  help: "baz"
-      ...> })
-      %Ecto.Changeset{valid?: true}
-
-      iex> AtCommand.changeset(%AtCommand{}, %{})
-      %Ecto.Changeset{valid?: false}
-
-  """
+  @doc false
   def changeset(atcommand, attrs) do
     attrs = parse_attrs(attrs)
 

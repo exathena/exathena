@@ -24,18 +24,7 @@ defmodule ExAthena.Accounts.Ban do
     timestamps(updated_at: false)
   end
 
-  @doc """
-  Generates the changeset for a given ban.
-
-  ## Examples
-
-      iex> Ban.changeset(%Ban{}, %{user_id: 1, banned_until: ~U[2024-02-01 00:00:00Z])
-      %Ecto.Changeset{valid?: true}
-
-      iex> User.changeset(%Ban{}, %{})
-      %Ecto.Changeset{valid?: false}
-
-  """
+  @doc false
   def changeset(ban, attrs) do
     ban
     |> cast(attrs, @fields)

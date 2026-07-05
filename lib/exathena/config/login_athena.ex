@@ -97,18 +97,7 @@ defmodule ExAthena.Config.LoginAthena do
     field :usercount_low, :integer, default: 200
   end
 
-  @doc """
-  Generates the changeset for a given login athena.
-
-  ## Examples
-
-      iex> LoginAthena.changeset(%LoginAthena{}, valid_attrs)
-      %Ecto.Changeset{valid?: true}
-
-      iex> LoginAthena.changeset(%LoginAthena{}, %{})
-      %Ecto.Changeset{valid?: false}
-
-  """
+  @doc false
   def changeset(login_athena, attrs) do
     login_athena
     |> cast(attrs, @fields)

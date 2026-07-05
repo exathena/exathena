@@ -4,9 +4,7 @@ defmodule ExAthena.Database.Group do
   """
   use ExAthena.Database
 
-  @typedoc """
-  The role type
-  """
+  @typedoc false
   @type role ::
           :player
           | :super_player
@@ -17,9 +15,7 @@ defmodule ExAthena.Database.Group do
           | :law_enforcement
           | :admin
 
-  @typedoc """
-  The Group type
-  """
+  @typedoc false
   @type t :: %__MODULE__{
           id: integer(),
           name: String.t(),
@@ -53,22 +49,7 @@ defmodule ExAthena.Database.Group do
     field :permissions, :map, source: :Permissions
   end
 
-  @doc """
-  Generates the changeset for a given group.
-
-  ## Examples
-
-      iex> Group.changeset(%Group{}, %{
-      ...>  id: 0,
-      ...>  name: "Foo",
-      ...>  role: :foo
-      ...> })
-      %Ecto.Changeset{valid?: true}
-
-      iex> Group.changeset(%Group{}, %{})
-      %Ecto.Changeset{valid?: false}
-
-  """
+  @doc false
   def changeset(group, attrs) do
     attrs = parse_attrs(attrs)
 

@@ -76,22 +76,7 @@ defmodule ExAthena.Accounts.User do
     timestamps()
   end
 
-  @doc """
-  Generates the changeset for a given user.
-
-  ## Examples
-
-      iex> User.changeset(%User{}, %{
-      ...>  username: "foo",
-      ...>  password: "bar",
-      ...>  email: "baz"
-      ...> })
-      %Ecto.Changeset{valid?: true}
-
-      iex> User.changeset(%User{}, %{})
-      %Ecto.Changeset{valid?: false}
-
-  """
+  @doc false
   def changeset(user, attrs) do
     user
     |> cast(attrs, @fields)
