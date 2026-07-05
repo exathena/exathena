@@ -2,9 +2,9 @@ defmodule ExAthena.Accounts do
   @moduledoc """
   The Accounts context.
   """
-  use ExAthena, :context
+  import Ecto.Query, warn: false
 
-  alias ExAthena.{Accounts, Config, Database}
+  alias ExAthena.{Accounts, Config, Database, Repo}
 
   @doc """
   Gets a single user.

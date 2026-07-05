@@ -2,7 +2,8 @@ defmodule ExAthena.Accounts.User do
   @moduledoc """
   The User schema representation.
   """
-  use ExAthena, :schema
+  use Ecto.Schema
+  import Ecto.Changeset
 
   @typep account_type :: :player | :server
   @typep role :: ExAthena.Database.Group.role()

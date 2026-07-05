@@ -4,12 +4,10 @@ defmodule ExAthenaLogger.Sql.AuthenticationLog do
   """
   use ExAthena, :schema
 
-  alias ExAthena.Accounts.User
-
   @typedoc false
   @type t :: %__MODULE__{
           id: pos_integer(),
-          user: required_assoc(User.t()),
+          user: Ecto.Schema.belongs_to(ExAthena.Accounts.User.t()),
           user_id: pos_integer(),
           join_ref: non_neg_integer(),
           ip: binary(),
@@ -28,7 +26,7 @@ defmodule ExAthenaLogger.Sql.AuthenticationLog do
     # Encrypted fields
     field :encrypted_ip, Cloak.Ecto.SHA256
 
-    belongs_to :user, User
+    belongs_to :user, ExAthena.Accounts.User
 
     timestamps(updated_at: false)
   end

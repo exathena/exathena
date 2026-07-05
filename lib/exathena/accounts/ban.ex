@@ -2,14 +2,13 @@ defmodule ExAthena.Accounts.Ban do
   @moduledoc """
   The Ban schema representation.
   """
-  use ExAthena, :schema
-
-  alias ExAthena.Accounts.User
+  use Ecto.Schema
+  import Ecto.Changeset
 
   @typedoc false
   @type t :: %__MODULE__{
           id: pos_integer(),
-          user: required_assoc(User.t()),
+          user: Ecto.Schema.belongs_to(ExAthena.Accounts.User.t()),
           user_id: pos_integer(),
           banned_until: Date.t(),
           inserted_at: NaiveDateTime.t()
@@ -19,7 +18,7 @@ defmodule ExAthena.Accounts.Ban do
 
   schema "bans" do
     field :banned_until, :utc_datetime
-    belongs_to :user, User
+    belongs_to :user, ExAthena.Accounts.User
 
     timestamps(updated_at: false)
   end
