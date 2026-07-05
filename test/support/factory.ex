@@ -124,15 +124,10 @@ defmodule ExAthena.Factory do
   end
 
   defp factory(:authentication_log) do
-    ip = Faker.Internet.ip_v4_address()
-
-    %ExAthenaLogger.Sql.AuthenticationLog{
+    %ExAthena.Accounts.AuthenticationLog{
       user: factory(:user),
-      join_ref: 30,
       message: Faker.Lorem.Shakespeare.romeo_and_juliet(),
-      metadata: %{},
-      encrypted_ip: ip,
-      ip: ip
+      metadata: %{}
     }
   end
 

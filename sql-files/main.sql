@@ -37,6 +37,38 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: authentication_logs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.authentication_logs (
+    id bigint NOT NULL,
+    user_id integer,
+    message text NOT NULL,
+    metadata json NOT NULL,
+    inserted_at timestamp(0) without time zone NOT NULL
+);
+
+
+--
+-- Name: authentication_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.authentication_logs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: authentication_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.authentication_logs_id_seq OWNED BY public.authentication_logs.id;
+
+
+--
 -- Name: bans; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -220,6 +252,13 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
+-- Name: authentication_logs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.authentication_logs ALTER COLUMN id SET DEFAULT nextval('public.authentication_logs_id_seq'::regclass);
+
+
+--
 -- Name: bans id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -245,6 +284,14 @@ ALTER TABLE ONLY public.subscriptions ALTER COLUMN id SET DEFAULT nextval('publi
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: authentication_logs authentication_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.authentication_logs
+    ADD CONSTRAINT authentication_logs_pkey PRIMARY KEY (id);
 
 
 --
@@ -389,5 +436,6 @@ ALTER TABLE ONLY public.subscriptions
 INSERT INTO public."schema_migrations" (version) VALUES (20220405004620);
 INSERT INTO public."schema_migrations" (version) VALUES (20220405004906);
 INSERT INTO public."schema_migrations" (version) VALUES (20220407120351);
+INSERT INTO public."schema_migrations" (version) VALUES (20220409185121);
 INSERT INTO public."schema_migrations" (version) VALUES (20220429001105);
 INSERT INTO public."schema_migrations" (version) VALUES (20260704215351);
