@@ -1,8 +1,6 @@
 defmodule ExAthena.IO.ParserTest do
   use ExAthena.DataCase
 
-  require TemporaryEnv
-
   alias ExAthena.Config.LoginAthena
   alias ExAthena.Database.Group
   alias ExAthena.IO.Parser
