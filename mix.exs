@@ -107,7 +107,6 @@ defmodule ExAthena.MixProject do
       {:temporary_env, "~> 2.0.1", only: :test},
       {:mox, "~> 1.2.0", only: [:dev, :test]},
       {:assertions, "~> 0.22.0", only: :test},
-      {:ex_machina, "~> 2.8.0", only: [:dev, :test]},
       {:faker, "~> 0.19.0", only: [:dev, :test]}
     ]
   end

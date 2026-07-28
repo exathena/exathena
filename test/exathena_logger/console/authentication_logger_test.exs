@@ -19,7 +19,7 @@ defmodule ExAthenaLogger.Console.AuthenticationLoggerTest do
     end
 
     test "returns log message for accepted connection", %{socket: socket} do
-      user = Factory.insert(:user)
+      user = insert(:user)
       meta = %{socket: socket, user: user, result: :accepted}
 
       assert AuthenticationLogger.get_log_message(meta) ==
@@ -34,8 +34,8 @@ defmodule ExAthenaLogger.Console.AuthenticationLoggerTest do
     end
 
     test "returns log message for user already banned", %{socket: socket = %{id: id}} do
-      user = Factory.insert(:user)
-      ban = Factory.insert(:ban, user: user)
+      user = insert(:user)
+      ban = insert(:ban, user: user)
       meta = %{socket: socket, user: user, banned_until: ban.banned_until, result: :user_banned}
 
       assert AuthenticationLogger.get_log_message(meta) ==
@@ -68,7 +68,7 @@ defmodule ExAthenaLogger.Console.AuthenticationLoggerTest do
     end
 
     test "returns log metadata for accepted connection", %{socket: socket = %{join_ref: join_ref}} do
-      user = Factory.insert(:user)
+      user = insert(:user)
       meta = %{socket: socket, user: user, result: :accepted}
       user_id = user.id
 
@@ -84,8 +84,8 @@ defmodule ExAthenaLogger.Console.AuthenticationLoggerTest do
     end
 
     test "returns log metadata for user already banned", %{socket: socket = %{join_ref: join_ref}} do
-      user = Factory.insert(:user)
-      banned_until = Factory.insert(:ban, user: user).banned_until
+      user = insert(:user)
+      banned_until = insert(:ban, user: user).banned_until
       user_id = user.id
 
       meta = %{socket: socket, user: user, banned_until: banned_until, result: :user_banned}

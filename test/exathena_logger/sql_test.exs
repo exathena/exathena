@@ -22,7 +22,7 @@ defmodule ExAthenaLogger.SqlTest do
     end
 
     test "inserts the accepted authentication log", %{event: event, socket: socket} do
-      user = Factory.insert(:user)
+      user = insert(:user)
       meta = %{socket: socket, user: user, result: :accepted}
 
       user_id = user.id
@@ -41,8 +41,8 @@ defmodule ExAthenaLogger.SqlTest do
     end
 
     test "inserts the user banned rejected authentication log", %{event: event, socket: socket} do
-      user = Factory.insert(:user)
-      banned_until = Factory.insert(:ban, user: user).banned_until
+      user = insert(:user)
+      banned_until = insert(:ban, user: user).banned_until
       meta = %{socket: socket, user: user, banned_until: banned_until, result: :user_banned}
 
       user_id = user.id

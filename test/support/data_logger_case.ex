@@ -22,14 +22,13 @@ defmodule ExAthenaLogger.DataCase do
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
+      import ExAthena.Factory
       import ExAthenaLogger.DataCase
       import ExAthena.TimeHelper
       import ExAthenaWeb.SocketHelper
       import ExUnit.CaptureLog
       import Mox
 
-      alias ExAthena.Factory
-      alias ExAthenaLogger.Factory, as: LoggerFactory
       alias ExAthenaLogger.Repo
 
       setup :verify_on_exit!

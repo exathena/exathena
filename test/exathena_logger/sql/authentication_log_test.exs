@@ -9,7 +9,7 @@ defmodule ExAthenaLogger.Sql.AuthenticationLogTest do
     end
 
     test "returns an valid changeset" do
-      attrs = LoggerFactory.params_for(:authentication_log)
+      attrs = params_for(:authentication_log)
       assert_changeset AuthenticationLog.changeset(%AuthenticationLog{}, attrs)
     end
   end

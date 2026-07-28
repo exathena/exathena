@@ -1,6 +1,6 @@
 defmodule UpdatedConfig do
-  @moduledoc false
-  use ExAthena, :schema
+  use Ecto.Schema
+  import Ecto.Changeset
 
   @fields ~w(
     date_format min_group_id_to_connect vip_group ipban_dynamic_pass_failure_ban usercount_medium use_dnsbl
@@ -63,8 +63,8 @@ defmodule UpdatedConfig do
 end
 
 defmodule InvalidConfig do
-  @moduledoc false
-  use ExAthena, :schema
+  use Ecto.Schema
+  import Ecto.Changeset
 
   schema "invalid_config.conf" do
     field :use_web_auth_token, :boolean
@@ -79,16 +79,14 @@ defmodule InvalidConfig do
 end
 
 defmodule InvalidFormatConfig do
-  @moduledoc false
-  use ExAthena, :schema
+  use Ecto.Schema
 
   schema "partial_valid_config.conf" do
   end
 end
 
 defmodule InvalidPathConfig do
-  @moduledoc false
-  use ExAthena, :schema
+  use Ecto.Schema
 
   schema "foo.conf" do
   end
@@ -125,14 +123,14 @@ defmodule InvalidDatabase do
 end
 
 defmodule InvalidFormatDatabase do
-  use ExAthena, :schema
+  use Ecto.Schema
 
   schema "invalid_format.yml" do
   end
 end
 
 defmodule InvalidPathDatabase do
-  use ExAthena, :schema
+  use Ecto.Schema
 
   schema "foo.yml" do
   end
