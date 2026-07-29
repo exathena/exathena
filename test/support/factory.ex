@@ -160,10 +160,6 @@ defmodule ExAthena.Factory do
 
   # Helpers
 
-  defp insert!(%ExAthenaLogger.Sql.AuthenticationLog{} = struct) do
-    ExAthenaLogger.Repo.insert!(struct)
-  end
-
   defp insert!(%_{} = struct) do
     ExAthena.Repo.insert!(struct)
   end

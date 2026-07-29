@@ -3,12 +3,6 @@ defmodule ExAthenaEventsTest do
 
   alias ExAthenaWeb.LoginChannel
 
-  setup do
-    Mox.stub_with(ExAthenaLoggerMock, FakeExAthenaLogger)
-
-    :ok
-  end
-
   describe "user_authentication_requested/1" do
     test "returns error when can't dispatch event" do
       socket = join_public_channel(LoginChannel, "login")

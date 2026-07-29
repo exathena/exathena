@@ -4,12 +4,6 @@ defmodule ExAthenaEvents.ProducerTest do
   alias ExAthenaEvents.Producer
   alias ExAthenaWeb.LoginChannel
 
-  setup do
-    Mox.stub_with(ExAthenaLoggerMock, FakeExAthenaLogger)
-
-    :ok
-  end
-
   test "user_authentication_requested/1 returns success after dispatching event" do
     socket = join_public_channel(LoginChannel, "login")
     assert :ok == Producer.user_authentication_requested(socket)
