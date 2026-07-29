@@ -7,18 +7,17 @@ locals_without_parens = [
 
   # Tests
   assert_changeset: 1,
-  refute_changeset: 1,
-  defmock: 2
+  refute_changeset: 1
 ]
 
 [
   import_deps: [:ecto, :ecto_sql, :phoenix, :mox],
-  subdirectories: ["sql-files/**/*/migrations"],
+  subdirectories: ["sql-files/*/migrations"],
   plugins: [Phoenix.LiveView.HTMLFormatter],
   inputs: [
     "*.{heex,ex,exs}",
     "{settings,lib,test,}/**/*.{heex,ex,exs}",
-    "sql-files/**/*/seeds.exs"
+    "sql-files/seeds.exs"
   ],
   locals_without_parens: locals_without_parens
 ]
