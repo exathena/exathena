@@ -2,12 +2,15 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.6
--- Dumped by pg_dump version 13.6
+\restrict Cr9EU1ycnLTw5h2hAFFqsypMYiykfsEhG6YdWZ0hBHgC0hPOZMRh8Aa0J18ucLb
+
+-- Dumped from database version 17.10
+-- Dumped by pg_dump version 17.10
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -119,7 +122,7 @@ CREATE TABLE public.oban_jobs (
     attempted_by text[],
     discarded_at timestamp without time zone,
     priority integer DEFAULT 0 NOT NULL,
-    tags character varying(255)[] DEFAULT ARRAY[]::character varying[],
+    tags text[] DEFAULT ARRAY[]::text[],
     meta jsonb DEFAULT '{}'::jsonb,
     cancelled_at timestamp without time zone,
     CONSTRAINT attempt_range CHECK (((attempt >= 0) AND (attempt <= max_attempts))),
@@ -351,13 +354,6 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: bans_user_id_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX bans_user_id_index ON public.bans USING btree (user_id);
-
-
---
 -- Name: oban_jobs_args_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -393,13 +389,6 @@ CREATE INDEX oban_jobs_state_queue_priority_scheduled_at_id_index ON public.oban
 
 
 --
--- Name: subscriptions_user_id_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX subscriptions_user_id_index ON public.subscriptions USING btree (user_id);
-
-
---
 -- Name: users_encrypted_email_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -432,6 +421,8 @@ ALTER TABLE ONLY public.subscriptions
 --
 -- PostgreSQL database dump complete
 --
+
+\unrestrict Cr9EU1ycnLTw5h2hAFFqsypMYiykfsEhG6YdWZ0hBHgC0hPOZMRh8Aa0J18ucLb
 
 INSERT INTO public."schema_migrations" (version) VALUES (20220405004620);
 INSERT INTO public."schema_migrations" (version) VALUES (20220405004906);

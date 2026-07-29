@@ -8,8 +8,6 @@ defmodule ExAthena.Repo.Migrations.CreateBans do
 
       timestamps(updated_at: false)
     end
-
-    create index(:bans, [:user_id])
   end
 
   def down do

@@ -8,8 +8,6 @@ defmodule ExAthena.Repo.Migrations.CreateSubscriptions do
 
       timestamps(updated_at: false)
     end
-
-    create index(:subscriptions, [:user_id])
   end
 
   def down do
