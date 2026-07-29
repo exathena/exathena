@@ -16,10 +16,11 @@
 
       erlang = pkgs.beam28Packages.erlang;
       elixir = pkgs.beam28Packages.elixir_1_20;
-      elixir-ls = pkgs.beam28Packages.elixir-ls.override {inherit elixir;};
+      mixRelease = pkgs.beam28Packages.mixRelease.override {inherit elixir erlang;};
+      expert = pkgs.beam28Packages.expert.override {inherit mixRelease;};
 
       libraries = with pkgs; [pkg-config];
-      packages = with pkgs; [elixir elixir-ls erlang tailwindcss-language-server openssl];
+      packages = with pkgs; [elixir erlang expert tailwindcss-language-server openssl];
     in {
       devShells.default = pkgs.mkShell {
         buildInputs = packages;
