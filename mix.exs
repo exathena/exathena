@@ -116,10 +116,10 @@ defmodule ExAthena.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "exathena.load", "run sql-files/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "ecto.migrate": ["ecto.migrate", "exathena.dump"],
-      "ecto.rollback": ["ecto.rollback", "exathena.dump"],
+      "ecto.migrate": ["ecto.migrate", "ecto.dump -d sql-files/main.sql"],
+      "ecto.rollback": ["ecto.rollback", "ecto.dump -d sql-files/main.sql"],
       sobelow: ["sobelow"],
-      test: ["ecto.drop -q", "ecto.create -q", "exathena.load -q", "test"]
+      test: ["ecto.drop -q", "ecto.create -q", "ecto.load -d sql-files/main.sql -q", "test"]
     ]
   end
 end
