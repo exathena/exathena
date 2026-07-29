@@ -2,7 +2,8 @@ defmodule ExAthena.Config.SubnetAthena do
   @moduledoc """
   The `conf/subnet_athena.conf` schema representation.
   """
-  use ExAthena, :schema
+  use Ecto.Schema
+  import Ecto.Changeset
 
   @typedoc """
   The ExAthena `subnet_athena.conf` type.

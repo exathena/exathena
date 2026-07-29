@@ -2,7 +2,8 @@ defmodule ExAthena.Config.LoginAthena do
   @moduledoc """
   The `conf/login_athena.conf` schema representation.
   """
-  use ExAthena, :schema
+  use Ecto.Schema
+  import Ecto.Changeset
 
   @typedoc """
   The ExAthena `login_athena.conf` type.

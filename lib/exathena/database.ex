@@ -24,7 +24,8 @@ defmodule ExAthena.Database do
   @doc false
   defmacro __using__(_) do
     quote location: :keep do
-      use ExAthena, :schema
+      use Ecto.Schema
+      import Ecto.Changeset
 
       @doc """
       Parses the given attributes from source field to struct field, if needed.
