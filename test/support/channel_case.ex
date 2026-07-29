@@ -34,16 +34,6 @@ defmodule ExAthenaWeb.ChannelCase do
   end
 
   setup tags do
-    pid_main = Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthena.Repo, shared: not tags[:async])
-
-    pid_logger =
-      Ecto.Adapters.SQL.Sandbox.start_owner!(ExAthenaLogger.Repo, shared: not tags[:async])
-
-    on_exit(fn ->
-      Ecto.Adapters.SQL.Sandbox.stop_owner(pid_main)
-      Ecto.Adapters.SQL.Sandbox.stop_owner(pid_logger)
-    end)
-
-    :ok
+    ExAthena.DataCase.setup_sandbox(tags)
   end
 end
