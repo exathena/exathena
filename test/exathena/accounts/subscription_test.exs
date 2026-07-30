@@ -5,8 +5,9 @@ defmodule ExAthena.Accounts.SubscriptionTest do
 
   describe "changeset/2" do
     test "returns a new valid changeset" do
-      attrs = params_with_assocs(:subscription)
-      assert_changeset Subscription.changeset(%Subscription{}, attrs)
+      assert_changeset Subscription.changeset(%Subscription{user_id: 1}, %{
+                         until: DateTime.utc_now()
+                       })
     end
 
     test "returns an invalid changeset" do

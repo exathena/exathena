@@ -5,8 +5,9 @@ defmodule ExAthena.Accounts.BanTest do
 
   describe "changeset/2" do
     test "returns a new valid changeset" do
-      attrs = params_with_assocs(:ban)
-      assert_changeset Ban.changeset(%Ban{}, attrs)
+      assert_changeset Ban.changeset(%Ban{user_id: 1}, %{
+                         banned_until: NaiveDateTime.utc_now()
+                       })
     end
 
     test "returns an invalid changeset" do
