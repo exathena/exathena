@@ -4,7 +4,6 @@ defmodule ExAthena.AccountsTest do
   @moduletag :skip
 
   alias ExAthena.Accounts
-  alias ExAthena.Accounts.User
 
   describe "get_user!/1" do
     test "throws an exception when user doesn't exist" do
@@ -13,7 +12,7 @@ defmodule ExAthena.AccountsTest do
 
     test "returns an existing user" do
       id = insert(:user).id
-      assert %User{id: ^id} = Accounts.get_user!(id)
+      assert %Accounts.User{id: ^id} = Accounts.get_user!(id)
     end
   end
 
@@ -24,7 +23,7 @@ defmodule ExAthena.AccountsTest do
 
     test "returns an existing user" do
       id = insert(:user).id
-      assert {:ok, %User{id: ^id}} = Accounts.get_user(id)
+      assert {:ok, %Accounts.User{id: ^id}} = Accounts.get_user(id)
     end
   end
 
@@ -37,7 +36,7 @@ defmodule ExAthena.AccountsTest do
       user = insert(:user)
       id = user.id
 
-      assert {:ok, %User{id: ^id}} = Accounts.get_user_by_username(user.username)
+      assert {:ok, %Accounts.User{id: ^id}} = Accounts.get_user_by_username(user.username)
     end
   end
 
@@ -48,7 +47,7 @@ defmodule ExAthena.AccountsTest do
 
     test "returns the new user" do
       attrs = params_for(:user)
-      assert %User{} = Accounts.create_user!(attrs)
+      assert %Accounts.User{} = Accounts.create_user!(attrs)
     end
   end
 
@@ -59,7 +58,7 @@ defmodule ExAthena.AccountsTest do
 
     test "returns the new user" do
       attrs = params_for(:user)
-      assert {:ok, %User{}} = Accounts.create_user(attrs)
+      assert {:ok, %Accounts.User{}} = Accounts.create_user(attrs)
     end
   end
 
@@ -75,7 +74,7 @@ defmodule ExAthena.AccountsTest do
       user = insert(:user)
       attrs = %{username: "foo"}
 
-      assert {:ok, %User{username: "foo"}} = Accounts.update_user(user, attrs)
+      assert {:ok, %Accounts.User{username: "foo"}} = Accounts.update_user(user, attrs)
     end
   end
 
