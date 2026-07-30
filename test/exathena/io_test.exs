@@ -6,12 +6,6 @@ defmodule ExAthena.IOTest do
 
   @options [:schema, :category, :name, :reload?]
 
-  setup do
-    start_supervised!(Config)
-
-    :ok
-  end
-
   test "configuration/0 returns the configuration list" do
     assert %{login_athena: _opts} = Config.configuration()
   end

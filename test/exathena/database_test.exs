@@ -4,11 +4,6 @@ defmodule ExAthena.DatabaseTest do
   alias ExAthena.Database
   alias ExAthena.Database.Group
 
-  setup do
-    start_supervised!(Database)
-    :ok
-  end
-
   describe "all" do
     test "returns all groups" do
       assert [%Group{} | _] = Database.all(PlayerGroupDb)
