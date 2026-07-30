@@ -1,5 +1,5 @@
 defmodule ExAthena.AccountsTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
   @moduletag capture_log: true
 
   alias ExAthena.Accounts

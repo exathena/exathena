@@ -1,5 +1,5 @@
 defmodule ExAthena.IO.ParserTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
 
   alias ExAthena.Config.LoginAthena
   alias ExAthena.Database.Group

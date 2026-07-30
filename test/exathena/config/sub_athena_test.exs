@@ -1,5 +1,5 @@
 defmodule ExAthena.Config.SubnetAthenaTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
 
   alias ExAthena.Config.SubnetAthena
 

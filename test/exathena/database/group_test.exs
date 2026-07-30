@@ -1,5 +1,5 @@
 defmodule ExAthena.Database.GroupTest do
-  use ExAthena.DataCase
+  use ExAthena.DataCase, async: true
 
   alias ExAthena.Database.Group
 
