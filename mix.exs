@@ -12,7 +12,6 @@ defmodule ExAthena.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
-      dialyzer: dialyzer(),
       gettext: gettext()
     ] ++ hex()
   end
@@ -28,15 +27,6 @@ defmodule ExAthena.MixProject do
   defp elixirc_paths(:dev), do: ["lib", "test/support/factories", "test/support/factory.ex"]
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
-
-  defp dialyzer do
-    [
-      plt_core_path: "tmp/plts",
-      plt_file: {:no_warn, "tmp/dialyzer.plt"},
-      plt_add_apps: [:ecto, :phoenix, :mix, :ex_unit],
-      ignore_warnings: ".dialyzer_ignore.exs"
-    ]
-  end
 
   defp gettext do
     [
@@ -97,7 +87,6 @@ defmodule ExAthena.MixProject do
 
       # Code quality & Security
       {:credo, "~> 1.7.19", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4.7", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.14.1", only: [:dev, :test], runtime: false},
 
       # Docs
