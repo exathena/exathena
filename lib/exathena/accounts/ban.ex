@@ -14,8 +14,6 @@ defmodule ExAthena.Accounts.Ban do
           inserted_at: NaiveDateTime.t()
         }
 
-  @fields ~w(user_id banned_until)a
-
   schema "bans" do
     field :banned_until, :utc_datetime
     belongs_to :user, ExAthena.Accounts.User
@@ -26,7 +24,7 @@ defmodule ExAthena.Accounts.Ban do
   @doc false
   def changeset(ban, attrs) do
     ban
-    |> cast(attrs, @fields)
-    |> validate_required(@fields)
+    |> cast(attrs, [:banned_until])
+    |> validate_required([:user_id, :banned_until])
   end
 end

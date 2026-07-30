@@ -10,7 +10,7 @@ defmodule ExAthena.Accounts.Subscription do
           id: pos_integer(),
           user: Ecto.Schema.belongs_to(ExAthena.Accounts.User.t()),
           user_id: pos_integer(),
-          until: Date.t(),
+          until: DateTime.t(),
           inserted_at: NaiveDateTime.t()
         }
 
@@ -24,7 +24,7 @@ defmodule ExAthena.Accounts.Subscription do
   @doc false
   def changeset(subscription, attrs) do
     subscription
-    |> cast(attrs, [:user_id, :until])
+    |> cast(attrs, [:until])
     |> validate_required([:user_id, :until])
   end
 end
