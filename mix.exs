@@ -84,6 +84,7 @@ defmodule ExAthena.MixProject do
 
       # Code quality & Security
       {:credo, "~> 1.7.19", only: [:dev, :test], runtime: false},
+      {:jump_credo_checks, "~> 0.4.0", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.14.1", only: [:dev, :test], runtime: false},
 
       # Docs
