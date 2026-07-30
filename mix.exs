@@ -67,9 +67,6 @@ defmodule ExAthena.MixProject do
       # Background jobs
       {:oban, "~> 2.23.0"},
 
-      # Mailing
-      {:swoosh, "~> 1.26.3"},
-
       # Telemetry
       {:telemetry_metrics, "~> 1.1.0"},
       {:telemetry_poller, "~> 1.3.0"},

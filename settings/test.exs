@@ -23,9 +23,6 @@ config :exathena, ExAthenaWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
   server: false
 
-# In test we don't send emails.
-config :exathena, ExAthena.Mailer, adapter: Swoosh.Adapters.Test
-
 # Print only warnings and errors during test
 config :logger, :console, level: :warning
 
