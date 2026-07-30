@@ -6,7 +6,7 @@ on:
 
 env:
   ELIXIR_VERSION: 1.20.2
-  OTP_VERSION: 28.5.0.3
+  OTP_VERSION: 28.5.0.4
   MIX_ENV: test
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
 
     services:
       db:
-        image: postgres:14
+        image: postgres:17
         ports: ['5432:5432']
         env:
           POSTGRES_PASSWORD: postgres
