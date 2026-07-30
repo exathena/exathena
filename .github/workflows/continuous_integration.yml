@@ -1,6 +1,8 @@
 name: continuous integration
 
 on:
+  pull_request:
+    branches: [ main ]
   push:
     branches: [ main ]
 
@@ -11,7 +13,7 @@ env:
 
 jobs:
   linux:
-    name: Test changes on main
+    name: Build & Test on Linux
     runs-on: ubuntu-latest
 
     services:
@@ -31,6 +33,7 @@ jobs:
 
     - name: Setup BEAM
       uses: erlef/setup-beam@v1
+      if: steps.erlef-cache.outputs.cache-hit != 'true'
       with:
         elixir-version: ${{ env.ELIXIR_VERSION }}
         otp-version: ${{ env.OTP_VERSION }}
@@ -54,8 +57,20 @@ jobs:
         mix deps.get
         mix deps.compile
 
+    - name: Check unused dependencies
+      run: mix deps.unlock --check-unused
+
     - name: Compile
       run: mix compile --warnings-as-errors
+
+    - name: Check format
+      run: mix format --check-formatted
+
+    - name: Analyze code
+      run: mix credo -a
+
+    - name: Analyse security
+      run: mix sobelow
 
     - name: Run tests
       run: mix test --warnings-as-errors
