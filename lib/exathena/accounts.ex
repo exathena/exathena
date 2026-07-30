@@ -276,12 +276,9 @@ defmodule ExAthena.Accounts do
   end
 
   defp do_check_user_expiration_date(user = %Accounts.User{}) do
-    now = ExAthena.now()
-
     query =
-      Accounts.Subscription
-      |> where([s], s.user_id == ^user.id)
-      |> where([s], ^now <= s.until)
+      from s in Accounts.Subscription,
+        where: s.user_id == ^user.id and ^ExAthena.now() <= s.until
 
     if Repo.one(query) do
       :ok
