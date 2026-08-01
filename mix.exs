@@ -71,9 +71,6 @@ defmodule ExAthena.MixProject do
       {:telemetry_metrics, "~> 1.1.0"},
       {:telemetry_poller, "~> 1.3.0"},
 
-      # Peer data
-      {:remote_ip, "~> 1.2.0"},
-
       # Internationalization
       {:gettext, "~> 0.26.2"},
       {:timex, "~> 3.7.13", override: true},
