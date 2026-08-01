@@ -53,7 +53,9 @@ defmodule ExAthena.MixProject do
       # Phoenix Framework
       {:phoenix, "~> 1.8.9"},
       {:phoenix_ecto, "~> 4.7.0"},
+      {:phoenix_live_view, "~> 1.2.8", override: true},
       {:phoenix_live_dashboard, "~> 0.8.7"},
+      {:phoenix_live_reload, "~> 1.7.0"},
       {:bandit, "~> 1.12.4"},
 
       # Database
