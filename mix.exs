@@ -59,6 +59,7 @@ defmodule ExAthena.MixProject do
       {:bandit, "~> 1.12.4"},
 
       # Database
+      {:ecto, "~> 3.14.1"},
       {:ecto_sql, "~> 3.14.0"},
       {:postgrex, ">= 0.0.0"},
 
