@@ -58,6 +58,8 @@ defmodule ExAthena.MixProject do
       {:phoenix_live_reload, "~> 1.7.0"},
       {:bandit, "~> 1.12.4"},
 
+      {:korangar_packets, "~> 0.1.0", github: "exathena/korangar-packets"},
+
       # Database
       {:ecto, "~> 3.14.1"},
       {:ecto_sql, "~> 3.14.0"},
