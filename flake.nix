@@ -4,15 +4,18 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
     utils.url = "github:numtide/flake-utils";
+    rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
   outputs = {
     self,
     nixpkgs,
     utils,
+    rust-overlay,
   }:
     utils.lib.eachDefaultSystem (system: let
-      pkgs = import nixpkgs {inherit system;};
+      overlays = [(import rust-overlay)];
+      pkgs = (import nixpkgs) {inherit system overlays;};
 
       erlang = pkgs.beam28Packages.erlang;
       elixir = pkgs.beam28Packages.elixir_1_20;
@@ -20,10 +23,12 @@
       expert = pkgs.beam28Packages.expert.override {inherit mixRelease;};
 
       libraries = with pkgs; [pkg-config];
+      rustToolchain = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
       packages = with pkgs; [elixir erlang expert tailwindcss-language-server openssl];
     in {
       devShells.default = pkgs.mkShell {
         buildInputs = packages;
+        nativeBuildInputs = [rustToolchain] ++ libraries;
 
         shellHook = ''
           export ERL_AFLAGS="-kernel shell_history enabled"
